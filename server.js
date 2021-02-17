@@ -11,73 +11,36 @@ const PORT = 8000;
 
 // middleware
 app.use(express.static("public"))
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json({ limit: "50mb" }))
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }))
 
-// routes
-// app.get("/", (req, res) => {
-//     res.sendFile(path.join(__dirname, "./transaction.html"))
-// })
+// get images
+let images;
+const url = "https://ispy-beta.herokuapp.com/images";
+const request = https.request(url, (response) => { 
+    let data = ''; 
+    response.on('data', chunk => data += chunk.toString())
+    response.on('end', () => images = JSON.parse(data)) 
+}) 
+request.on('error', error => console.log(error))
+request.end()
 
-
-// image stuff ///////////////////////////
-// const images = [];
-
-app.get("/api/images", (req, res) => {
-
-    // send request to image server for image array
-    const url = "https://ispy-beta.herokuapp.com/images";
-    const request = https.request(url, (response) => { 
-        let data = ''; 
-        response.on('data', chunk => data += chunk.toString())
-        response.on('end', () => res.json(JSON.parse(data))) 
-    }) 
-    request.on('error', (error) => console.log(error))
-    request.end()  
-
-
-    // res.json(images)
-    
-    // const options = {
-    //     hostname: 'ispy-beta.herokuapp.com',
-    //     port: 443,
-    //     path: '/images',
-    //     method: 'GET',
-    // }
-
-    // const foo = https.request(options, res2 => {
-    //     console.log(`statusCode: ${res2.statusCode}`)
-
-    //     res2.on('data', d => {
-    //         // images.push(d)
-    //         process.stdout.write(d)
-    //     })
-    // })
-
-    // foo.on('error', error => {
-    //     console.error(error)
-    // })
-
-    // foo.end()
-
-    // res.json(images)
-
-    // var request = require('request');
-    // request('http://127.0.0.1:1234', function (err, res) {
-    //     if (err) return console.error(err.message);
-
-    //     console.log(res.body);
-    //     // Hello world
-
-    //     server.close();
-    // });
+app.get("/image/:index", (req, res) => {
+    const index = parseInt(req.params.index);
+    console.log(index)
+    if (index != NaN) {
+        const url = "https://ispy-beta.herokuapp.com/dataURIs/" + index;
+        const request = https.request(url, (response) => { 
+            let data = ''; 
+            response.on('data', chunk => data += chunk.toString())
+            response.on('end', () => res.json(JSON.parse(data)))
+        }) 
+        request.on('error', error => console.log(error))
+        request.end()
+    } else {
+        res.sendStatus(400)
+    }
 })
-
-// TO DO: IMAGE STUFF
-
-
-// transaction stuff/////////////////
-
 
 // create genesis block
 const currentTime = new Date().getTime();
@@ -85,13 +48,16 @@ const hash = sha256("genesis");
 const genesisBlock = {
     hash: hash,
     time: currentTime,
-    to: hash,
+    from: "",
+    to: "bd7723991b474fc53855e88c634860510984d17eb37a06598273de048750596b",
     amount: 1000000,
+    image: {
+        secret: "genesis"
+    }
 };
 
 // begin blockchain
 const blockchain = [genesisBlock];
-
 app.get("/api/blockchain", (req, res) => {
     res.json(blockchain)
 })
@@ -146,7 +112,6 @@ app.post("/api/transaction", (req, res) => {
         else image = images.splice(imageIndex, 1)[0][0];
 
         // temp
-        image.dataURI = "";
 
         // properly format transaction as block
         const block = {
@@ -172,41 +137,6 @@ app.post("/api/transaction", (req, res) => {
     // error if no images left
     return res.sendStatus(500);
 })
-// end transaction stuff/////////////////
-
-
-// wallets stuff //////////////////////////
-// const wallets = [];
-
-// app.post("/api/wallets/new")
-
-
-// end wallets stuff //////////////////////////
-
-// blockchain stuff ////////////////////////////
-
-// app.get("/api/balances", (req, res) => {
-//     const balances = {};
-//     for (let i = 0; i < blockchain.length; i++) {
-//         const transaction = blockchain[i];
-
-//         // to do: validate transaction
-        
-//         balances[transaction.from] -= amount;
-//         if (balances[transaction.to]) {
-//             balances[transaction.to] += amount;
-//         } else {
-//             balances[transaction.to] = amount;
-//         }
-//     }
-
-//     res.json(balances)
-// })
-
-// blockchain.push(new Block(blockchain, images, "santa", "me", 5))
-// blockchain.push(new Block(blockchain, images, "mom", "me", 3))
-// blockchain.push(new Block(blockchain, images, "me", "sister", 2))
-// end blockchain stuff ////////////////////////////
 
 // start server
 app.listen(PORT, () => console.log('Server running at localhost:' + PORT))
