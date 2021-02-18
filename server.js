@@ -16,18 +16,27 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }))
 
 // get images
 let images;
+let lastImageDataURI; // keep track of only most recent image data URI
 const url = "https://ispy-beta.herokuapp.com/images";
 const request = https.request(url, (response) => { 
     let data = ''; 
     response.on('data', chunk => data += chunk.toString())
-    response.on('end', () => images = JSON.parse(data)) 
+    response.on('end', () => {images = JSON.parse(data); console.log(images)}) 
 }) 
 request.on('error', error => console.log(error))
-request.end()
+request.end(() => {
+    // const url = "https://ispy-beta.herokuapp.com/dataURIs/0";
+    // const request = https.request(url, (response) => { 
+    //     let data = ''; 
+    //     response.on('data', chunk => data += chunk.toString())
+    //     response.on('end', () => lastImageDataURI = JSON.parse(data))
+    // }) 
+    // request.on('error', error => console.log(error))
+    // request.end()
+})
 
 app.get("/image/:index", (req, res) => {
     const index = parseInt(req.params.index);
-    console.log(index)
     if (index != NaN) {
         const url = "https://ispy-beta.herokuapp.com/dataURIs/" + index;
         const request = https.request(url, (response) => { 
@@ -49,7 +58,7 @@ const genesisBlock = {
     hash: hash,
     time: currentTime,
     from: "",
-    to: "bd7723991b474fc53855e88c634860510984d17eb37a06598273de048750596b",
+    to: "a8463ae29104a2be98e4cd193a2646c34573b2ee538a3ede2825447dc354f595",
     amount: 1000000,
     image: {
         secret: "genesis"
@@ -90,28 +99,19 @@ app.post("/api/transaction", (req, res) => {
         const transactionId = parseInt(idHex, 16);
 
         // find correct index of desired image in images array
-        // image id should be as close to transaction id as possible without going over
-        // if transaction id is less then the smallest image id then use smallest image id
-        let imageIndex = images.length - 1;
+        // TO DO NOTE
+        let image;
+        let smallestDiff = Infinity;
         for (let i = 0; i < images.length; i++) {
-            if (images[i][0].id > transactionId) {
-                if (i === 0) {
-                    imageIndex = 0;
-                    break
-                }
-                else {
-                    imageIndex = i - 1;
-                    break
+            if (!images[i].blockIndex) {
+                const diff = Math.abs(images[i].id - transactionId);
+                if (diff < smallestDiff) {
+                    smallestDiff = diff;
+                    image = images[i];
                 }
             }
         }
-
-        // remove and store image from images array at specified index
-        let image;
-        if (images[imageIndex].length > 1) image = images[imageIndex].shift();
-        else image = images.splice(imageIndex, 1)[0][0];
-
-        // temp
+        image.blockIndex = blockchain.length;
 
         // properly format transaction as block
         const block = {
@@ -128,7 +128,7 @@ app.post("/api/transaction", (req, res) => {
         blockchain.push(block)
 
         // temp
-        console.log(blockchain)
+        // console.log(blockchain)
 
         // successfully end
         return res.sendStatus(200);
@@ -136,6 +136,34 @@ app.post("/api/transaction", (req, res) => {
 
     // error if no images left
     return res.sendStatus(500);
+})
+
+app.post("/spot", (req, res) => {
+    const spot = req.body;
+
+    const blockIndex = parseInt(spot.blockIndex);
+    const block = blockchain[blockIndex];
+    const imageIndex = block.image.index;
+
+    
+    const url = "https://ispy-beta.herokuapp.com/dataURIs/" + imageIndex;
+    const request = https.request(url, response => { 
+        let data = ''; 
+        response.on('data', chunk => data += chunk.toString())
+        response.on('end', () => {
+            const dataURI = JSON.parse(data);
+            const testHash = sha256(spot.secret + dataURI);
+            if (testHash === block.image.hash) {
+                block.image.secret = spot.secret;
+                block.image.spotter = spot.wallet;
+                res.sendStatus(200)
+            } else {
+                res.sendStatus(400)
+            }
+        })
+    }) 
+    request.on('error', error => res.sendStatus(500))
+    request.end()
 })
 
 // start server

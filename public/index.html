@@ -55,7 +55,7 @@
             padding: 16px;
         }
 
-        .transaction:hover {
+        .transaction:hover, .transaction.active {
             background-color: bisque;
         }
 
@@ -74,13 +74,28 @@
             background-color: antiquewhite;
             border-radius: 16px;
             border: 1px black solid;
+            /* transition: width 2s ease-out 100ms; */
         }
 
         #balance-container:hover {
+            /* width: 300px;
+            height: 200px; */
             background-color: bisque;
         }
 
-        #form-container {
+        #wallet-info {
+            margin-top: 16px;
+            padding-left: 16px;
+            padding-bottom: 16px;
+            display: none;
+        }
+
+        #wallet-address {
+            margin-bottom: 16px;
+            font-size: small;
+        }
+
+        #send-container {
             display: flex;
             flex-direction: row;
             justify-content: center;
@@ -93,8 +108,18 @@
             font-size: 1.5em;
         }
 
-        input {
+        #to {
             margin-bottom: 16px;
+        }
+
+        #fee {
+            text-align: right;
+            font-size: small;
+            margin-top: 2px;
+            margin-bottom: 8px;
+        }
+
+        input {
             width: 256px;
         }
 
@@ -120,7 +145,19 @@
         }
 
         #secret-form {
+        }
+
+        #result {
+            margin-top: 4px;
+            height: 32px;
+        }
+
+        #confirmed-container {
             margin-bottom: 8px;
+        }
+
+        #genesis-container {
+            margin-bottom: 32px;
         }
 
         #image-container {
@@ -149,27 +186,42 @@
         <!-- <div id="wallet-address"></div> -->
         <div>Wallet Balance</div>
         <div><span id="wallet-balance">0</span> Spots</div>
+        <div id="wallet-info">
+            <p>Public Address</p>
+            <p id="wallet-address"></p>
+            <p>Private Key</p>
+            <p id="wallet-secret"></p>
+        </div>
     </div>
 
-    <div id="form-container">
+    <div id="send-container">
         <form id="send-form">
             <h3>Send Spots</h3>
             <label for="to">Recipient Address</label><br />
-            <input id="to" type="text" autocomplete="off" required /><br />
+            <input id="to" type="text" autocomplete="off" minlength="64" maxlength="64" required /><br />
             <label for="amount">Amount</label><br />
             <input id="amount" type="number" min="0" required /><br />
+            <p id="fee">(Fee = 1 Spot)</p>
             <button id="send-button">Send</button>
         </form>
     </div>
 
     <div id="transaction-container">
         <form id="secret-form">
-            <p class="secret-info">This transaction is still pending. To confirm the transaction, be the first to guess the secret word based on the image below. You have unlimited guesses and it is not case-sensitive.</p>
-            <p class="secret-info">You will recieve 1 Spot for confirming the transaction.</p>
+            <p class="secret-info">This transaction is still pending. To confirm this transaction, be the first to guess the secret word by spotting something in the image below. You have unlimited guesses and it is not case-sensitive.</p>
+            <p class="secret-info">You will recieve 1 Spot for confirming this transaction.</p>
             <label for="secret">Guess the secret word</label><br />
-            <input id="secret" type="text" />
+            <input id="secret" type="text" autocomplete="off" required />
             <button>Submit</button>
+            <p id="result"></p>
         </form>
+        <div id="confirmed-container">
+            <p>Transaction confirmed.</p>
+            <p>Secret: <span id="secret-reveal"></span></p>
+        </div>
+        <div id="genesis-container">
+            <p>This is the genesis block.</p>
+        </div>
         <div id="image-container"></div>
         <div id="transaction-info-container">
             <!-- <div>Transaction Hash: <span id="transaction-hash"></span></div>
@@ -187,27 +239,56 @@
     <script src="/fontawesome/js/all.js"></script>
 
     <script>
+
+        // track current transaction user is viewing
+        let currentBlockIndex;
+        let currentBlock;
+        let currentDataURI;
+
         let wallet = {
             address: localStorage.getItem("walletAddress"),
             balance: 0,
         };
 
+        function makeSecret() {
+            var result = "";
+            var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var charactersLength = characters.length;
+            for (let i = 0; i < 24; i++ ) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+
         if (!wallet.address) {
-            wallet.address = sha256("" + Math.random());
+            wallet.secret = makeSecret();
+            wallet.address = sha256(wallet.secret);
+            localStorage.setItem("walletSecret", wallet.secret)
             localStorage.setItem("walletAddress", wallet.address)
         } else {
-            console.log("address: " + wallet.address)
+            wallet.secret = localStorage.getItem("walletSecret");
         }
+
+        $("#wallet-address").text(wallet.address)
+        $("#wallet-secret").text(wallet.secret.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim())
 
         let blockchain = [];
         $.get("/api/blockchain")
         .done(data => {
             blockchain = data;
+            console.log(blockchain)
             for (let i = blockchain.length - 1; i >= 0; i--) {
                 const block = blockchain[i];
 
-                if (block.to === wallet.address) wallet.balance += parseInt(block.amount);
-                if (block.from === wallet.address) wallet.balance -= parseInt(block.amount);
+                if (block.to === wallet.address) {
+                    wallet.balance += parseInt(block.amount);
+                }
+                if (block.from === wallet.address) {
+                    wallet.balance -= parseInt(block.amount) + 1;
+                }
+                if (block.image) {
+                    if (block.image.spotter === wallet.address) wallet.balance += 1;
+                }
 
                 $("#transactions-container").append(`
                     <div class="transaction" data-index=${i}>
@@ -234,7 +315,7 @@
 
         $("#send-form").on("submit", e => {
             e.preventDefault()
-            const to = $("#to").val();
+            const to = $("#to").val().trim();
             const amount = parseInt($("#amount").val());
 
             if (amount > 0) {
@@ -243,18 +324,52 @@
                 // to do: add signature
                 $.post("/api/transaction", {
                     from: wallet.address,
-                    to: sha256("" + Math.random()),
+                    to: to,
                     amount: amount,
                 })
-                .done(data => console.log(data))
+                .done(data => { window.location.reload() })
                 .fail(() => alert("error"))
+            }
+        })
+
+        $("#secret-form").on("submit", e => {
+            e.preventDefault()
+            $("#result").text("")
+            const guess = $("#secret").val().trim().toLowerCase();
+            $("#secret").val("")
+
+            const testHash = sha256(guess + currentDataURI);
+            if (testHash === currentBlock.image.hash) {
+                console.log(guess)
+                $.post("/spot", {
+                    secret: guess,
+                    blockIndex: currentBlockIndex,
+                    wallet: wallet.address,
+                })
+                .done(data => {
+                    $("#result").text("Correct! Reloading...")
+                    $("#result").css({ color: "green" })
+
+                    // temp
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 2000)
+                })
+                .fail(() => alert("error"))
+            } else {
+                $("#result").text("Incorrect guess")
+                $("#result").css({ color: "red" })
             }
         })
 
         function attachTransactionClickHandler() {
             $(".transaction").on("click", function (e) {
-                const blockIndex = parseInt($(this).attr("data-index"));
-                const block = blockchain[blockIndex];
+                $(".transaction").removeClass("active")
+                $(this).addClass("active")
+
+                currentBlockIndex = parseInt($(this).attr("data-index"));
+                // const block = blockchain[currentBlockIndex];
+                currentBlock = blockchain[currentBlockIndex];
 
                 // $("#transaction-hash").text(block.hash)
                 // $("#transaction-from").text(block.from)
@@ -262,36 +377,63 @@
                 // $("#transaction-amount").text(block.amount)
 
                 let altered = false;
-                if (!block.image.secret) {
-                    block.image.secret = "???";
+                if (!currentBlock.image.secret) {
+                    currentBlock.image.secret = "???";
                     altered = true;
                 }
-                const transactionInfo = JSON.stringify(block, null, 4).replace(/"|,/g, '');
-                if (altered) delete block.image.secret;
+                delete currentBlock.image.blockIndex; // just doing this because its useless
+                const transactionInfo = JSON.stringify(currentBlock, null, 4).replace(/"|,/g, '');
+                if (altered) delete currentBlock.image.secret;
                 const formatted = `<pre><code>Transaction Details\n${transactionInfo}</code></pre>`;
                 $("#transaction-info-container").html(formatted)
 
-                if (block.image.secret) $("#secret-form").hide();
-                else $("#secret-form").show();
+                if (currentBlockIndex === 0) {
+                    $("#genesis-container").show()
+                    $("#secret-form").hide()
+                    $("#confirmed-container").hide()
+                } else {
+                    $("#genesis-container").hide()
+                    if (currentBlock.image.secret) {
+                        $("#secret-form").hide()
+                        $("#secret-reveal").text(currentBlock.image.secret)
+                        $("#confirmed-container").show()
+                    }
+                    else {
+                        $("#result").text("")
+                        $("#secret-form").show()
+                        $("#confirmed-container").hide()
+                    }
+                }
 
-                if (blockIndex > 0) {
-                    $.get("/image/" + (blockIndex - 1), dataURI => {
+                if (currentBlockIndex > 0) {
+                    $.get("/image/" + currentBlock.image.index, dataURI => {
+                        currentDataURI = dataURI;
                         const $img = $("<img>");
                         $img.attr("src", dataURI)
-                        $("#form-container").hide()
+                        $("#send-container").hide()
                         $("#transaction-container").show()
                         $("#image-container").show()
                         $("#image-container").html($img)
 
                     })
                 } else {
-                    $("#form-container").hide()
+                    $("#send-container").hide()
                     $("#transaction-container").show()
                     $("#image-container").hide()
                 }
                 
             })
         }
+
+        $("#balance-container").on("mouseenter", function(e) {
+            // $(this).append(`<p>Address</p><p>${wallet.address}</p>`)
+            $("#wallet-info").show()
+        })
+
+        $("#balance-container").on("mouseleave", function(e) {
+            // $(this).append(`<p>Address</p><p>${wallet.address}</p>`)
+            $("#wallet-info").hide()
+        })
         
     </script>
     
