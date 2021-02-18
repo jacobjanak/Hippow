@@ -7,7 +7,7 @@ const https = require('https');
 
 // server
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 // middleware
 app.use(express.static("public"))
