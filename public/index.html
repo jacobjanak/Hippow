@@ -8,20 +8,134 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css" />
     <link rel="stylesheet" href="/fontawesome/css/all.css" />
     <style>
+
+/*
+  Causes body to overflow and should only be used
+  on non-scrolling pages
+*/
+
+
+/*
+  Rotating in-place cube
+*/
+#floating-cubes li {
+  position: relative;
+  -webkit-perspective-origin: 50% 50%;
+  perspective-origin: 50% 50%;
+  -webkit-transition: .3s all ease;
+  transition: .3s all ease;
+}
+.cube {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  -webkit-animation: spin 5s infinite linear;
+  animation: spin 5s infinite linear;
+  -webkit-transition: .5s all ease-in-out;
+  transition: .5s all ease-in-out;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  -webkit-transform: rotateX(-20deg) rotateY(28deg);
+  transform: rotateX(-20deg) rotateY(28deg);
+  -webkit-backface-visibility: visible;
+  backface-visibility: visible;
+}
+.cube div {
+  position: absolute;
+  display: block;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  background-color: #B4A7B7;
+  margin: 0;
+}
+.cube .back { opacity: 0.6; }
+.cube .front { opacity: 0.5; }
+.cube .left { opacity: 0.5; }
+.cube .right { opacity: 0.4; }
+.cube .top { opacity: 0.4; }
+.cube .bottom { opacity: 0.3; }
+
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotateX(0) rotateY(0);
+    transform: rotateX(0) rotateY(0);
+  }
+  to {
+    -webkit-transform: rotateX(360deg) rotateY(360deg);
+    transform: rotateX(360deg) rotateY(360deg);
+  }
+}
+@keyframes spin {
+  from {
+    -webkit-transform: rotateX(0) rotateY(0);
+    transform: rotateX(0) rotateY(0);
+  }
+  to {
+    -webkit-transform: rotateX(360deg) rotateY(360deg);
+    transform: rotateX(360deg) rotateY(360deg);
+  }
+}
+
+/*
+  Make cubes float upwards
+*/
+#floating-cubes {
+  z-index: -1;
+  position: absolute; /* mix-blend-mode won't work on <body> */
+  top: 0;
+  left: 252px;
+  right: 0;
+  bottom: 0;
+  mix-blend-mode: difference; /* overlay is similar, exclusion/difference are inverted */
+}
+#floating-cubes li {
+  position: absolute;
+  bottom: -180px;
+  list-style: none;
+  display: block;
+  -webkit-transition-timing-function: linear;
+  transition-timing-function: linear;
+}
+@-webkit-keyframes square {
+  0% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  100% {
+    -webkit-transform: translateY(calc(-100vh + -300px));
+    transform: translateY(calc(-100vh + -300px));
+  }
+}
+@keyframes square {
+  0% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  100% {
+    -webkit-transform: translateY(calc(-100vh + -300px));
+    transform: translateY(calc(-100vh + -300px)); /* rotate(600deg) */
+  }
+}
+
+
         *, html, body {
             font-family: 'Courier New', Courier, monospace;
         }
 
         body {
             padding-bottom: 128px;
+            background-color: #FBEAFF;
+            height: 100vh;
+            overflow-y: hidden;
         }
 
         .fa-check-circle {
-            color: green;
+            color: #00C9B9;
         }
 
         .fa-exclamation-circle {
-            color: orange;
+            color: #EEAB8E;
         }
 
         /* adjust the words next to a icon so that they're in line with other words */
@@ -40,15 +154,16 @@
             margin-right: 16px;
             padding: 8px 16px;
             display: inline-block;
-            background-color: antiquewhite;
+            background-color: #4E4351;
+            color: white;
             border-radius: 16px;
-            border: 1px black solid;
+            border: 1px #B4A7B7 solid;
         }
 
         nav > ul > li:hover {
             /* width: 300px;
             height: 200px; */
-            background-color: bisque;
+            background-color: #665B69;
         }
 
         #transactions-container {
@@ -60,8 +175,9 @@
             height: 100vh;
             overflow-y: auto;
             max-width: 240px;
-            border-right: 1px black solid;
-            background-color: antiquewhite;
+            border-right: 1px #B4A7B7 solid;
+            background-color: #4E4351;
+            color: white;
         }
 
         /* hide scrollbar */
@@ -71,8 +187,8 @@
 
         #transactions-header {
             direction: ltr; /* move scrollbar to left side */
-            padding: 16px 16px 8px;
-            border-bottom: 1px black solid;
+            padding: 26px 16px 8px;
+            border-bottom: 1px #B4A7B7 solid;
             text-align: center;
         }
 
@@ -80,11 +196,15 @@
             direction: ltr; /* move scrollbar to left side */
             cursor: pointer;
             padding: 16px;
-            border-bottom: 1px black solid;
+            border-bottom: 1px #B4A7B7 solid;
         }
 
-        .transaction:hover, .transaction.active {
-            background-color: bisque;
+        .transaction:hover {
+            background-color: #665B69;
+        }
+
+        .transaction.active {
+            background-color: #665B69;
         }
 
         .transaction > .status {
@@ -93,22 +213,22 @@
         }
 
         #balance-container {
-            cursor: pointer;
             position: fixed;
             top: 16px;
             right: 32px;
             padding: 8px 16px;
             text-align: right;
-            background-color: antiquewhite;
+            background-color: #4E4351;
+            color: white;
             border-radius: 16px;
-            border: 1px black solid;
+            border: 1px #B4A7B7 solid;
             /* transition: width 2s ease-out 100ms; */
         }
 
         #balance-container:hover {
             /* width: 300px;
             height: 200px; */
-            background-color: bisque;
+            /* background-color: #B4A7B7; */
         }
 
         #wallet-info {
@@ -133,10 +253,11 @@
             right: 0;
             left: 0;
             bottom: 0;
-            background-color: bisque;
+            background-color: #4E4351;
         }
 
         #show {
+            cursor: pointer;
             margin-left: auto;
         }
 
@@ -161,6 +282,7 @@
             margin-top: 8px;
             margin-left: 32px;
             font-size: larger;
+            color: #4E4351;
         }
 
         #send-container {
@@ -168,6 +290,10 @@
             flex-direction: row;
             justify-content: center;
             margin-top: 96px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: #4E4351;
         }
 
         h3 {
@@ -195,7 +321,48 @@
             cursor: pointer;
             margin-top: 8px;
             width: 100%;
+            padding: 8px 16px;
+            background-color: #4E4351;
+            color: white;
+            font-size: medium;
+            border-radius: 16px;
+            border: 1px #B4A7B7 solid;
         }
+
+        #send-button:hover {
+            background-color: #665B69;
+        }
+
+        button {
+            cursor: pointer;
+            padding: 4px 8px;
+            background-color: #4E4351;
+            color: white;
+            font-size: small;
+            border-radius: 16px;
+            border: 1px #B4A7B7 solid;
+        }
+
+        button:hover {
+            background-color: #665B69;
+        }
+
+        /* .nav-link {
+            cursor: pointer;
+            margin-right: 16px;
+            padding: 8px 16px;
+            display: inline-block;
+            background-color: #4E4351;
+            color: white;
+            border-radius: 16px;
+            border: 1px #B4A7B7 solid;
+        }
+
+        nav > ul > li:hover {
+            /* width: 300px;
+            height: 200px; */
+            /* background-color: #665B69; */
+        /* } */
 
         #transaction-container {
             display: none;
@@ -246,6 +413,10 @@
 
 <body>
 
+    <ul id="floating-cubes">
+    
+    </ul>
+
     <div id="transactions-container">
         <div id="transactions-header">Blockchain</div>
     </div>
@@ -261,7 +432,7 @@
             <div style="position: relative;">
                 <p id="wallet-secret"></p>
                 <div id="cover-up">
-                    <span id="show"><i class="fas fa-eye"></i> Click to show</span>
+                    <span id="show"><i class="fas fa-eye fa-sm"></i> Click to show</span>
                 </div>
             </div>
         </div>
@@ -290,19 +461,19 @@
             <div>Spot transactions use a unique consensus algorithm that is based on the standard proof-of-work method. Consensus algorithms are a necessary part of blockchain technology because they prevent cheating. Compared to other proof-of-work blockchains, Spots.cc is at least 99.99% more energy efficient because it utilizes the abilities of humans, rather than computers, to do work.</div>
         </section>
         <section>
-            <div>Bitcoin annualized power consumption:</div>
-            <div class="energy-usage">77.78 TWh</div>
+            <div>Bitcoin power consumption:</div>
+            <div class="energy-usage">80 TW/hr</div>
         </section>
         <section>
-            <div>Spots.cc annualized power consumption:</div>
-            <div class="energy-usage">0.0000000025 TWh</div>
+            <div>Spots.cc power consumption:</div>
+            <div class="energy-usage">0.00000000000000000000025 TW/hr</div>
         </section>
-        <section>
+        <!-- <section>
             <div>Besides being energy efficient, this unique blockchain offers several other benefits. For one, it is the only cryptocurrency you can "mine" directly from your browser. Other blockchains require you to download complicated mining software and many only work when run on a GPU. By comparison, Spots.cc makes it incredibly easy to get started earning crypto.</div>
         </section>
         <section>
             <div>Another added benefit is that the usability of Spots.cc makes it a great educational tool. Never before has it been so easy to explore a blockchain and understand the process of mining cryptocurrencies with hands-on experience. My hope is that this project demystifies cryptocurrencies for new investors with its simple and transparent process.</div>
-        </section>
+        </section> -->
     </div>
 
     <div id="send-container">
@@ -481,7 +652,7 @@
                 })
                 .done(data => {
                     $("#result").text("Correct! Reloading...")
-                    $("#result").css({ color: "green" })
+                    $("#result").css({ color: "#00C9B9" })
 
                     // temp
                     setTimeout(() => {
@@ -561,20 +732,123 @@
         $("#balance-container").on("mouseenter", function(e) {
             // $(this).append(`<p>Address</p><p>${wallet.address}</p>`)
             $("#wallet-info").show()
+            $("#cover-up").show()
         })
 
         $("#balance-container").on("mouseleave", function(e) {
             // $(this).append(`<p>Address</p><p>${wallet.address}</p>`)
             $("#wallet-info").hide()
+            $("#cover-up").show()
         })
 
         $("#show").on("click", function(e) {
             $("#cover-up").hide()
         })
 
-        $("#wallet-secret").on("click", function(e) {
-            $("#cover-up").show()
-        })
+
+        $(function() {
+  // Global variables
+  let i;
+  let timer;
+  let $cubeList = $('#floating-cubes');
+  const sides = [
+    {name: 'front', animation: ''},
+    {name: 'back', animation: 'rotateY(180deg) rotateX(0deg)'},
+    {name: 'right', animation: 'rotateY(90deg)'},
+    {name: 'left', animation: 'rotateY(-90deg)'},
+    {name: 'top', animation: 'rotateX(90deg)'},
+    {name: 'bottom', animation: 'rotateX(-90deg) rotateZ(-180deg)'},
+  ];
+
+  class Cube {
+    constructor(cube) {
+      this.position = cube.position;
+      this.size = cube.size;
+      this.duration = cube.duration;
+    };
+
+    addToDom() {
+      let li = document.createElement('li');
+      li.appendChild(generateCubeDiv(this.size / 2));
+
+      // Add styling to the new li element
+      Object.assign(li.style, {
+        left: this.position + '%',
+        height: this.size + 'px',
+        width: this.size + 'px',
+        webkitPerspective: this.size * 3 + 'px',
+        perspective: this.size * 3 + 'px',
+        webkitAnimation: 'square ' + this.duration + 's',
+        animation: 'square ' + this.duration + 's'
+      });
+
+      // Remove cube after it's finished animating and has reached the top
+      // unless you want to freeze your users browser after a minute
+      $(li).one("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd",
+      function(event) {
+        (this).remove();
+      });
+
+      $cubeList.append(li);
+    };
+  };
+
+  // ACTUAL SCRIPT BEGINS
+  
+  startTimer();
+
+  // ACTUAL SCRIPT ENDS (lol)
+
+  // This timer stuff is necessary because otherwise
+  // when a user changes tabs they will be greeted by
+  // a million cubes when they return to this tab
+  //NOTE: doesn't work well on codepen
+  function startTimer() {
+    newCube()
+    timer = window.setInterval(function() {
+      newCube();
+    }, 8000);
+    window.onblur = function() { stopTimer(); };
+    window.onfocus = null;
+  }
+
+  function stopTimer() {
+    clearInterval(timer);
+    window.onblur = null;
+    window.onfocus = function() { startTimer(); };
+  }
+
+  function newCube() {
+    let cube = new Cube({
+      position: random(0, 90),
+      size: random(30, 80),
+      duration: random(10, 12)
+    });
+    cube.addToDom();
+  };
+
+  function generateCubeDiv(translateSize) {
+    let cubeDiv = document.createElement('div');
+    cubeDiv.className = 'cube';
+
+    // Add all 6 sides to cube div and add their respective styles/classes
+    for (i = 0; i < sides.length; i++) {
+      let sideDiv = document.createElement('div');
+      sideDiv.className = sides[i].name;
+      Object.assign(sideDiv.style, {
+        webkitTransform: sides[i].animation + ' translateZ(' + translateSize + 'px)',
+        transform: sides[i].animation + ' translateZ(' + translateSize + 'px)'
+      });
+      cubeDiv.appendChild(sideDiv);
+    };
+
+    return cubeDiv;
+  };
+
+  function random(min, max) {
+    return Math.floor((Math.random() * max) + min);
+  };
+});
         
     </script>
     
