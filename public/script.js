@@ -56,12 +56,14 @@ function displayBlock(block, index) {
 }
 
 // retrieve blockchain info
+let bestServer = ""; // server with the longest blockchain
 let blockchain = []; // the longest blockchain
 for (let i = 0; i < serverList.length; i++) {
     $.get(serverList[i] + "/api/blockchain")
     .done(possibleBlockchain => {
         if (validateBlockchain(possibleBlockchain)) {
             if (possibleBlockchain.length > blockchain.length) {
+                bestServer = serverList[i];
                 blockchain = possibleBlockchain;
                 processBlockchain(blockchain)
             }
@@ -131,13 +133,14 @@ $("#send-form").on("submit", e => {
 
         // send data to server
         // to do: add signature
-        $.post("/api/transaction", {
-            from: wallet.address,
-            to: to,
-            amount: amount,
-        })
-        .done(data => { window.location.reload() })
-        .fail(() => alert("error"))
+        for (let i = 0; i < serverList.length; i++) {
+            $.post(serverList[i] + "/api/transaction", {
+                from: wallet.address,
+                to: to,
+                amount: amount,
+            })
+            .done(data => { window.location.reload() })
+        }
     }
 })
 
@@ -175,13 +178,14 @@ $("#secret-form").on("submit", e => {
         attachTransactionClickHandler()
 
         // send guess to server
-        $.post("/spot", {
-            secret: guess,
-            blockIndex: currentBlockIndex,
-            wallet: wallet.address,
-        })
-        .done()
-        .fail(() => alert("error"))
+        for (let i = 0; i < serverList.length; i++) {
+            $.post(serverList[i] + "/spot", {
+                secret: guess,
+                blockIndex: currentBlockIndex,
+                wallet: wallet.address,
+            })
+            .done()
+        }
     } else {
         $("#result").text("Incorrect guess")
         $("#result").css({ color: "red" })
@@ -248,13 +252,13 @@ function attachTransactionClickHandler() {
         }
 
         if (currentBlockIndex > 0) {
-            $.get("/image/" + currentBlock.image.index, dataURI => {
+            console.log(bestServer)
+            $.get(bestServer + "/image/" + currentBlock.image.index, dataURI => {
                 currentDataURI = dataURI;
                 const $img = $("<img>");
                 $img.attr("src", dataURI)        
                 $("#image-container").show()
                 $("#image-container").html($img)
-
             })
         } else {
             $("#image-container").hide()
