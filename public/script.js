@@ -30,6 +30,13 @@ if (!wallet.address) {
 $("#wallet-address").text(wallet.address)
 $("#wallet-secret").text(wallet.secret.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim())
 
+// load list of trusted servers from local storage
+let serverList = JSON.parse(localStorage.getItem("serverList"))
+if (!serverList) {
+    serverList = ["http://localhost:8000"];
+}
+$("#server-list").val(serverList.join("\n"))
+
 function displayBlock(block, index) {
     console.log(block)
     return `
@@ -165,6 +172,17 @@ $("#secret-form").on("submit", e => {
         $("#result").text("Incorrect guess")
         $("#result").css({ color: "red" })
     }
+})
+
+$("#server-form").on("submit", e => {
+    e.preventDefault()
+    const input = $("#server-list").val().trim();
+    serverList = input.split("\n");
+    for (let i = 0; i < serverList.length; i++) {
+        serverList[i] = serverList[i].trim();
+    }
+    localStorage.setItem("serverList", JSON.stringify(serverList))
+    window.location.reload()
 })
 
 function attachTransactionClickHandler() {

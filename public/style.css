@@ -250,6 +250,24 @@ nav > ul > li:hover {
     max-width: 768px;
 }
 
+.small {
+    font-size: small;
+}
+
+#server-list {
+    margin-bottom: 8px;
+    max-width: 100%;
+    width: 378px;
+}
+
+#server-list-info {
+    margin-bottom: 4px;
+}
+
+#server-submit {
+    font-size: medium;
+}
+
 #transaction-container {
     display: none;
     margin-top: 96px;

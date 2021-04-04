@@ -8,7 +8,6 @@
   Rotating in-place cube
 */
 body {
-  padding-bottom: 128px;
   height: 100vh;
   overflow-y: hidden;
 }

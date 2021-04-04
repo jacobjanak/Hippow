@@ -94,10 +94,17 @@
     </div>
 
     <div id="settings-container">
-        Hello
-        <textarea rows="5">
-            http://localhost:8000
-        </textarea>
+        <h2 class="header">Options</h2>
+        <section>
+            <p id="server-list-info">List of servers you will recieve blockchain data from:</p>
+            <p class="small">(Enter one URL per line)</p>
+        </section>
+        <br />
+        <form id="server-form">
+            <textarea id="server-list" rows="5" required></textarea>
+            <br />
+            <button id="server-submit">Update</button>
+        </form>
     </div>
 
     <div id="transaction-container">
