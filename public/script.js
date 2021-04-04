@@ -55,14 +55,29 @@ function displayBlock(block, index) {
     `;
 }
 
-let blockchain = [];
-$.get("/api/blockchain")
-.done(data => {
-    blockchain = data;
-    console.log(blockchain)
+// retrieve blockchain info
+let blockchain = []; // the longest blockchain
+for (let i = 0; i < serverList.length; i++) {
+    $.get(serverList[i] + "/api/blockchain")
+    .done(possibleBlockchain => {
+        if (validateBlockchain(possibleBlockchain)) {
+            if (possibleBlockchain.length > blockchain.length) {
+                blockchain = possibleBlockchain;
+                processBlockchain(blockchain)
+            }
+        }
+    })
+    .catch(err => console.log(err))
+}
+
+function validateBlockchain(blockchain) {
+    return true;
+}
+
+function processBlockchain(blockchain) {
+    $("#transactions-container").html(`<div id="transactions-header">Blockchain</div>`)
     for (let i = blockchain.length - 1; i >= 0; i--) {
         const block = blockchain[i];
-
         if (block.to === wallet.address) {
             wallet.balance += parseInt(block.amount);
         }
@@ -72,7 +87,6 @@ $.get("/api/blockchain")
         if (block.image) {
             if (block.image.spotter === wallet.address) wallet.balance += 1;
         }
-
         $("#transactions-container").append(displayBlock(block, i))
     }
 
@@ -81,7 +95,7 @@ $.get("/api/blockchain")
     $("#amount").attr("max", wallet.balance)
     $("#transactions-container").show()
     attachTransactionClickHandler()
-})
+}
 
 $(".nav-link").on("click", function(e) {
     $(".transaction").removeClass("active")
