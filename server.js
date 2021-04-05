@@ -59,14 +59,13 @@ app.get("/image/:index", (req, res) => {
 })
 
 // create genesis block
-const currentTime = new Date().getTime();
 const hash = sha256("genesis");
 const genesisBlock = {
     hash: hash,
-    time: currentTime,
+    time: 0,
     from: "",
-    to: "a8463ae29104a2be98e4cd193a2646c34573b2ee538a3ede2825447dc354f595",
-    amount: 1000000,
+    to: "d8f90747cafcd65366c66ab9a6264889e90e21cf72786ed040b7f4c32ecb942c",
+    amount: 1000000000,
     image: {
         secret: "genesis"
     }

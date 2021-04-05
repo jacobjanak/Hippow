@@ -9,9 +9,9 @@ let wallet = {
 };
 
 function makeSecret() {
-    var result = "";
-    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    var charactersLength = characters.length;
+    let result = "";
+    let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let charactersLength = characters.length;
     for (let i = 0; i < 24; i++ ) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
@@ -73,6 +73,66 @@ for (let i = 0; i < serverList.length; i++) {
 }
 
 function validateBlockchain(blockchain) {
+
+    // validate genesis block
+    const genesisBlock = blockchain[0];
+    if (
+        genesisBlock.hash != sha256("genesis") ||
+        genesisBlock.time != 0 ||
+        genesisBlock.from != "" ||
+        genesisBlock.to != "d8f90747cafcd65366c66ab9a6264889e90e21cf72786ed040b7f4c32ecb942c" ||
+        genesisBlock.amount != 1000000000 ||
+        genesisBlock.image.secret != "genesis"
+    ) {
+        return false;
+    }
+
+    // validate every other block
+    for (let i = 1; i < blockchain.length; i++) {
+        const previousBlock = blockchain[i - 1];
+        const currentBlock = blockchain[i];
+
+        if (
+            currentBlock.time < previousBlock.time ||
+            currentBlock.from.length != 64 ||
+            currentBlock.from.to != 64
+        ) {
+            return false;
+        }
+        
+        // create test hash
+        let stringToHash = currentBlock.time;
+        stringToHash += currentBlock.from;
+        stringToHash += currentBlock.to;
+        stringToHash += currentBlock.amount;
+        stringToHash += previousBlock.hash;
+        const testHash = sha256(stringToHash);
+
+        if (testHash != currentBlock.hash) {
+            return false;
+        }
+
+        // find correct index of desired image in images array
+        // const idHex = testHash.substring(0, 3);
+        // const transactionId = parseInt(idHex, 16);
+        // let image;
+        // let smallestDiff = Infinity;
+        // for (let i = 0; i < images.length; i++) {
+        //     if (!images[i].blockIndex) {
+        //         const diff = Math.abs(images[i].id - transactionId);
+        //         if (diff < smallestDiff) {
+        //             smallestDiff = diff;
+        //             image = images[i];
+        //         }
+        //     }
+        // }
+        // image.blockIndex = blockchain.length;
+
+        // to do:
+        // validate image
+        // validate balances
+    }
+
     return true;
 }
 
@@ -232,6 +292,7 @@ function attachTransactionClickHandler() {
         $("#secret").prop("disabled", false);
         $("#home-container").hide()
         $("#send-container").hide()
+        $("#settings-container").hide()
 
         if (currentBlockIndex === 0) {
             $("#genesis-container").show()

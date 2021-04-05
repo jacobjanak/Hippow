@@ -1,0 +1,18 @@
+Phase 1
+
+Modularize blockchain code from front-end code
+Add more security
+Use image URL's instead of Data URI's
+Redo entire image system
+Add an image upload page
+Redo server side code
+Mobile version
+
+Phase 2
+
+Write docs
+Promote on social media
+
+Phase 3
+
+Add memo
