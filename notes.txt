@@ -12,6 +12,7 @@ Phase 2
 
 Write docs
 Promote on social media
+Get someone to write a random image web scraper
 
 Phase 3
 

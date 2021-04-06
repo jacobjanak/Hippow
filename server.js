@@ -11,8 +11,8 @@ const PORT = process.env.PORT || 8001;
 
 // middleware
 app.use(express.static("public"))
-app.use(bodyParser.json({ limit: "50mb" }))
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 // enable CORS
 app.use((req, res, next) => {
@@ -23,12 +23,12 @@ app.use((req, res, next) => {
 
 // get images
 let images;
-let lastImageDataURI; // keep track of only most recent image data URI
+// let lastImageDataURI; // keep track of only most recent image data URI
 const url = "https://ispy-beta.herokuapp.com/images";
 const request = https.request(url, (response) => { 
     let data = ''; 
     response.on('data', chunk => data += chunk.toString())
-    response.on('end', () => {images = JSON.parse(data); console.log(images)}) 
+    response.on('end', () => { images = JSON.parse(data); console.log(images) }) 
 }) 
 request.on('error', error => console.log(error))
 request.end(() => {
@@ -42,21 +42,21 @@ request.end(() => {
     // request.end()
 })
 
-app.get("/image/:index", (req, res) => {
-    const index = parseInt(req.params.index);
-    if (index != NaN) {
-        const url = "https://ispy-beta.herokuapp.com/dataURIs/" + index;
-        const request = https.request(url, (response) => { 
-            let data = ''; 
-            response.on('data', chunk => data += chunk.toString())
-            response.on('end', () => res.json(JSON.parse(data)))
-        }) 
-        request.on('error', error => console.log(error))
-        request.end()
-    } else {
-        res.sendStatus(400)
-    }
-})
+// app.get("/image/:index", (req, res) => {
+//     const index = parseInt(req.params.index);
+//     if (index != NaN) {
+//         const url = "https://ispy-beta.herokuapp.com/dataURIs/" + index;
+//         const request = https.request(url, (response) => { 
+//             let data = ''; 
+//             response.on('data', chunk => data += chunk.toString())
+//             response.on('end', () => res.json(JSON.parse(data)))
+//         }) 
+//         request.on('error', error => console.log(error))
+//         request.end()
+//     } else {
+//         res.sendStatus(400)
+//     }
+// })
 
 // create genesis block
 const hash = sha256("genesis");
@@ -101,40 +101,47 @@ app.post("/api/transaction", (req, res) => {
         const hash = sha256(stringToHash);
 
         // to create id convert first 3 hex digits of hash to decimal
-        const idHex = hash.substring(0, 3);
-        const transactionId = parseInt(idHex, 16);
+        // const idHex = hash.substring(0, 3);
+        // const transactionId = parseInt(idHex, 16);
 
-        // find correct index of desired image in images array
-        // TO DO NOTE
+        // find correct image in images array
         let image;
-        let smallestDiff = Infinity;
         for (let i = 0; i < images.length; i++) {
-            if (!images[i].blockIndex) {
-                const diff = Math.abs(images[i].id - transactionId);
-                if (diff < smallestDiff) {
-                    smallestDiff = diff;
-                    image = images[i];
-                }
+            if (hash < images[i].hash) {
+                image = images.splice(i, 1)[0];
+                break
+            }
+            else if (i === images.length - 1) {
+                image = images.pop();
             }
         }
-        image.blockIndex = blockchain.length;
+
+
+
+        // TO DO NOTE
+        // let image;
+        // let smallestDiff = Infinity;
+        // for (let i = 0; i < images.length; i++) {
+        //     if (!images[i].blockIndex) {
+        //         const diff = Math.abs(images[i].id - transactionId);
+        //         if (diff < smallestDiff) {
+        //             smallestDiff = diff;
+        //             image = images[i];
+        //         }
+        //     }
+        // }
+        // image.blockIndex = blockchain.length;
 
         // properly format transaction as block
         const block = {
             hash: hash,
-            id: transactionId,
             time: currentTime,
             from: transaction.from,
             to: transaction.to,
             amount: transaction.amount,
             image: image,
         };
-
-        // push block to blockchain
         blockchain.push(block)
-
-        // temp
-        // console.log(blockchain)
 
         // successfully end
         return res.sendStatus(200);
@@ -146,30 +153,18 @@ app.post("/api/transaction", (req, res) => {
 
 app.post("/spot", (req, res) => {
     const spot = req.body;
-
     const blockIndex = parseInt(spot.blockIndex);
     const block = blockchain[blockIndex];
-    const imageIndex = block.image.index;
 
-    
-    const url = "https://ispy-beta.herokuapp.com/dataURIs/" + imageIndex;
-    const request = https.request(url, response => { 
-        let data = ''; 
-        response.on('data', chunk => data += chunk.toString())
-        response.on('end', () => {
-            const dataURI = JSON.parse(data);
-            const testHash = sha256(spot.secret + dataURI);
-            if (testHash === block.image.hash) {
-                block.image.secret = spot.secret;
-                block.image.spotter = spot.wallet;
-                res.sendStatus(200)
-            } else {
-                res.sendStatus(400)
-            }
-        })
-    }) 
-    request.on('error', error => res.sendStatus(500))
-    request.end()
+    // test if the secret was actually correct
+    const testHash = sha256(block.image.url + spot.secret);
+    if (testHash === block.image.hash) {
+        block.image.secret = spot.secret;
+        block.image.spotter = spot.wallet;
+        res.sendStatus(200)
+    } else {
+        res.sendStatus(400)
+    }
 })
 
 // start server

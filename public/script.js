@@ -1,7 +1,7 @@
 // track current transaction user is viewing
 let currentBlockIndex;
 let currentBlock;
-let currentDataURI;
+// let currentDataURI;
 
 let wallet = {
     address: localStorage.getItem("walletAddress"),
@@ -74,6 +74,8 @@ for (let i = 0; i < serverList.length; i++) {
 
 function validateBlockchain(blockchain) {
 
+    console.log("hi")
+
     // validate genesis block
     const genesisBlock = blockchain[0];
     if (
@@ -95,8 +97,9 @@ function validateBlockchain(blockchain) {
         if (
             currentBlock.time < previousBlock.time ||
             currentBlock.from.length != 64 ||
-            currentBlock.from.to != 64
+            currentBlock.to.length != 64
         ) {
+            console.log(1)
             return false;
         }
         
@@ -137,6 +140,7 @@ function validateBlockchain(blockchain) {
 }
 
 function processBlockchain(blockchain) {
+    console.log(blockchain)
     $("#transactions-container").html(`<div id="transactions-header">Blockchain</div>`)
     for (let i = blockchain.length - 1; i >= 0; i--) {
         const block = blockchain[i];
@@ -147,7 +151,9 @@ function processBlockchain(blockchain) {
             wallet.balance -= parseInt(block.amount) + 1;
         }
         if (block.image) {
-            if (block.image.spotter === wallet.address) wallet.balance += 1;
+            if (block.image.spotter === wallet.address) {
+                wallet.balance += 1;
+            }
         }
         $("#transactions-container").append(displayBlock(block, i))
     }
@@ -210,7 +216,7 @@ $("#secret-form").on("submit", e => {
     const guess = $("#secret").val().trim().toLowerCase();
     $("#secret").val("")
 
-    const testHash = sha256(guess + currentDataURI);
+    const testHash = sha256(currentBlock.image.url + guess);
     if (testHash === currentBlock.image.hash) {
         $("#result").css({ color: "#00C9B9" })
         $("#result").text("Correct!")
@@ -227,6 +233,7 @@ $("#secret-form").on("submit", e => {
         // update display of block in blockchain
         block = blockchain[currentBlockIndex];
         block.image.secret = guess;
+        block.image.spotter = wallet.address;
         $(".transaction").each(function() {
             if ($(this).attr("data-index") == currentBlockIndex) {
                 $(this).replaceWith(displayBlock(block, currentBlockIndex))
@@ -313,18 +320,13 @@ function attachTransactionClickHandler() {
         }
 
         if (currentBlockIndex > 0) {
-            console.log(bestServer)
-            $.get(bestServer + "/image/" + currentBlock.image.index, dataURI => {
-                currentDataURI = dataURI;
-                const $img = $("<img>");
-                $img.attr("src", dataURI)        
-                $("#image-container").show()
-                $("#image-container").html($img)
-            })
+            const $img = $("<img>");
+            $img.attr("src", currentBlock.image.url)        
+            $("#image-container").show()
+            $("#image-container").html($img)
         } else {
             $("#image-container").hide()
-        }
-        
+        }  
     })
 }
 
