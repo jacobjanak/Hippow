@@ -74,8 +74,6 @@ for (let i = 0; i < serverList.length; i++) {
 
 function validateBlockchain(blockchain) {
 
-    console.log("hi")
-
     // validate genesis block
     const genesisBlock = blockchain[0];
     if (
@@ -89,7 +87,7 @@ function validateBlockchain(blockchain) {
         return false;
     }
 
-    // validate every other block
+    // validate every block
     for (let i = 1; i < blockchain.length; i++) {
         const previousBlock = blockchain[i - 1];
         const currentBlock = blockchain[i];
@@ -99,7 +97,6 @@ function validateBlockchain(blockchain) {
             currentBlock.from.length != 64 ||
             currentBlock.to.length != 64
         ) {
-            console.log(1)
             return false;
         }
         
@@ -114,26 +111,6 @@ function validateBlockchain(blockchain) {
         if (testHash != currentBlock.hash) {
             return false;
         }
-
-        // find correct index of desired image in images array
-        // const idHex = testHash.substring(0, 3);
-        // const transactionId = parseInt(idHex, 16);
-        // let image;
-        // let smallestDiff = Infinity;
-        // for (let i = 0; i < images.length; i++) {
-        //     if (!images[i].blockIndex) {
-        //         const diff = Math.abs(images[i].id - transactionId);
-        //         if (diff < smallestDiff) {
-        //             smallestDiff = diff;
-        //             image = images[i];
-        //         }
-        //     }
-        // }
-        // image.blockIndex = blockchain.length;
-
-        // to do:
-        // validate image
-        // validate balances
     }
 
     return true;

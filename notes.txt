@@ -1,10 +1,10 @@
 Phase 1
 
-Modularize blockchain code from front-end code
-Add more security
-Use image URL's instead of Data URI's
-Redo entire image system
-Add an image upload page
+Add more security to server
+> signature
+> verify spot guessing
+> balances should be under confirmation not submission
+Add good/evil checking
 Redo server side code
 Mobile version
 

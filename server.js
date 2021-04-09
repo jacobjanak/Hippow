@@ -23,40 +23,12 @@ app.use((req, res, next) => {
 
 // get images
 let images;
-// let lastImageDataURI; // keep track of only most recent image data URI
 const url = "https://ispy-beta.herokuapp.com/images";
 const request = https.request(url, (response) => { 
     let data = ''; 
     response.on('data', chunk => data += chunk.toString())
-    response.on('end', () => { images = JSON.parse(data); console.log(images) }) 
-}) 
-request.on('error', error => console.log(error))
-request.end(() => {
-    // const url = "https://ispy-beta.herokuapp.com/dataURIs/0";
-    // const request = https.request(url, (response) => { 
-    //     let data = ''; 
-    //     response.on('data', chunk => data += chunk.toString())
-    //     response.on('end', () => lastImageDataURI = JSON.parse(data))
-    // }) 
-    // request.on('error', error => console.log(error))
-    // request.end()
+    response.on('end', () => { images = JSON.parse(data); }) 
 })
-
-// app.get("/image/:index", (req, res) => {
-//     const index = parseInt(req.params.index);
-//     if (index != NaN) {
-//         const url = "https://ispy-beta.herokuapp.com/dataURIs/" + index;
-//         const request = https.request(url, (response) => { 
-//             let data = ''; 
-//             response.on('data', chunk => data += chunk.toString())
-//             response.on('end', () => res.json(JSON.parse(data)))
-//         }) 
-//         request.on('error', error => console.log(error))
-//         request.end()
-//     } else {
-//         res.sendStatus(400)
-//     }
-// })
 
 // create genesis block
 const hash = sha256("genesis");
@@ -73,6 +45,8 @@ const genesisBlock = {
 
 // begin blockchain
 const blockchain = [genesisBlock];
+const balances = { [genesisBlock.to]: genesisBlock.amount };
+
 app.get("/api/blockchain", (req, res) => {
     res.json(blockchain)
 })
@@ -81,13 +55,20 @@ app.post("/api/transaction", (req, res) => {
     const transaction = req.body;
     transaction.amount = parseInt(transaction.amount);
 
-    // to do: validate transaction
+    // validate transaction
+    // TODO: signature
+    if (
+        !balances[transaction.from] ||
+        balances[transaction.from] < transaction.amount + 1
+    ) {
+        return res.sendStatus(400);
+    }
 
     // transaction can't be processed without an image
     if (images.length > 0) {
         
         // store current time in transaction
-        const currentTime = new Date().getTime();
+        const currentTime = new Date().getTime(); //NOTE: do we even need times?
         
         // grab previous block in blockchain for hash
         const prevBlock = blockchain[blockchain.length - 1];
@@ -99,10 +80,6 @@ app.post("/api/transaction", (req, res) => {
         stringToHash += transaction.amount;
         stringToHash += prevBlock.hash;
         const hash = sha256(stringToHash);
-
-        // to create id convert first 3 hex digits of hash to decimal
-        // const idHex = hash.substring(0, 3);
-        // const transactionId = parseInt(idHex, 16);
 
         // find correct image in images array
         let image;
@@ -116,22 +93,6 @@ app.post("/api/transaction", (req, res) => {
             }
         }
 
-
-
-        // TO DO NOTE
-        // let image;
-        // let smallestDiff = Infinity;
-        // for (let i = 0; i < images.length; i++) {
-        //     if (!images[i].blockIndex) {
-        //         const diff = Math.abs(images[i].id - transactionId);
-        //         if (diff < smallestDiff) {
-        //             smallestDiff = diff;
-        //             image = images[i];
-        //         }
-        //     }
-        // }
-        // image.blockIndex = blockchain.length;
-
         // properly format transaction as block
         const block = {
             hash: hash,
@@ -142,6 +103,14 @@ app.post("/api/transaction", (req, res) => {
             image: image,
         };
         blockchain.push(block)
+
+        // update balances
+        balances[transaction.from] -= transaction.amount + 1;
+        if (balances[transaction.to]) {
+            balances[transaction.to] += transaction.amount;
+        } else {
+            balances[transaction.to] = transaction.amount;
+        }
 
         // successfully end
         return res.sendStatus(200);
