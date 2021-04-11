@@ -55,8 +55,15 @@ app.post("/api/transaction", (req, res) => {
     const transaction = req.body;
     transaction.amount = parseInt(transaction.amount);
 
+    // validate signature
+    // signature proves that the sender has the private key
+    const verifyOptions = { algorithms: ["RS256"] };
+    const verified = jwt.verify(token, publicKey, verifyOptions);
+    console.log("\n Verified: " + JSON.stringify(verified));
+    const decoded = jwt.decode(token, {complete: true});
+    console.log(decoded)
+
     // validate transaction
-    // TODO: signature
     if (
         !balances[transaction.from] ||
         balances[transaction.from] < transaction.amount + 1
@@ -94,15 +101,14 @@ app.post("/api/transaction", (req, res) => {
         }
 
         // properly format transaction as block
-        const block = {
+        blockchain.push({
             hash: hash,
             time: currentTime,
             from: transaction.from,
             to: transaction.to,
             amount: transaction.amount,
             image: image,
-        };
-        blockchain.push(block)
+        })
 
         // update balances
         balances[transaction.from] -= transaction.amount + 1;
