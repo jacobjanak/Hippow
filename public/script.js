@@ -115,8 +115,8 @@ function validateBlockchain(blockchain) {
 
         if (
             currentBlock.time < previousBlock.time ||
-            currentBlock.from.length != 64 ||
-            currentBlock.to.length != 64
+            currentBlock.from.length != 216 ||
+            currentBlock.to.length != 216
         ) {
             return false;
         }

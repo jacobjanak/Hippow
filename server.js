@@ -46,7 +46,7 @@ const genesisBlock = {
 
 // RSA signature util
 function formatKey(key) {
-    return "-----BEGIN PUBLIC KEY-----" + key.replace(/(.{64})/g,"$1\n") + "-----END PUBLIC KEY-----";
+    return "-----BEGIN PUBLIC KEY-----\n" + key.replace(/(.{64})/g,"$1\n") + "\n-----END PUBLIC KEY-----";
 }
 
 // begin blockchain
