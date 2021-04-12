@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 // const path = require('path');
+const jwt = require('jsonwebtoken');
 const sha256 = require('js-sha256');
 const https = require('https');
 
@@ -16,18 +17,18 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 // enable CORS
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
 })
 
 // get images
 let images;
 const url = "https://ispy-beta.herokuapp.com/images";
-const request = https.request(url, (response) => { 
+https.get(url, res => { 
     let data = ''; 
-    response.on('data', chunk => data += chunk.toString())
-    response.on('end', () => { images = JSON.parse(data); }) 
+    res.on('data', chunk => data += chunk.toString())
+    res.on('end', () => { images = JSON.parse(data); console.log(images) })
 })
 
 // create genesis block
@@ -36,12 +37,17 @@ const genesisBlock = {
     hash: hash,
     time: 0,
     from: "",
-    to: "d8f90747cafcd65366c66ab9a6264889e90e21cf72786ed040b7f4c32ecb942c",
+    to: "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCWSW0fLPOICZJ5E0XCDWDlF+3luR05S7KEO865VCTZu9zG8Fim/uUq01RR9U9OqM3GTUapOGR8ADMSoah86IBYqjL/ZD8ComUK7yI2yyzYcD1suvEHWirym06ET/fgQI/Aqfbta84p/SO+HYXArjPqnegA+Y6XhOaHWLqDZhoexQIDAQAB",
     amount: 1000000000,
     image: {
         secret: "genesis"
     }
 };
+
+// RSA signature util
+function formatKey(key) {
+    return "-----BEGIN PUBLIC KEY-----" + key.replace(/(.{64})/g,"$1\n") + "-----END PUBLIC KEY-----";
+}
 
 // begin blockchain
 const blockchain = [genesisBlock];
@@ -55,12 +61,15 @@ app.post("/api/transaction", (req, res) => {
     const transaction = req.body;
     transaction.amount = parseInt(transaction.amount);
 
+    console.log("okay --------++++++++")
+
     // validate signature
     // signature proves that the sender has the private key
+    const signature = transaction.signature;
     const verifyOptions = { algorithms: ["RS256"] };
-    const verified = jwt.verify(token, publicKey, verifyOptions);
+    const verified = jwt.verify(signature, formatKey(transaction.from), verifyOptions);
     console.log("\n Verified: " + JSON.stringify(verified));
-    const decoded = jwt.decode(token, {complete: true});
+    const decoded = jwt.decode(signature, {complete: true});
     console.log(decoded)
 
     // validate transaction
@@ -117,6 +126,8 @@ app.post("/api/transaction", (req, res) => {
         } else {
             balances[transaction.to] = transaction.amount;
         }
+
+        console.log(blockchain)
 
         // successfully end
         return res.sendStatus(200);

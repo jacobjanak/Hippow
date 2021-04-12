@@ -1,34 +1,55 @@
 // track current transaction user is viewing
 let currentBlockIndex;
 let currentBlock;
-// let currentDataURI;
 
 let wallet = {
-    address: localStorage.getItem("walletAddress"),
+    address: localStorage.getItem("publicKey"),
     balance: 0,
 };
 
-function makeSecret() {
-    let result = "";
-    let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let charactersLength = characters.length;
-    for (let i = 0; i < 24; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+// function makeSecret() {
+//     let result = "";
+//     let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//     let charactersLength = characters.length;
+//     for (let i = 0; i < 24; i++ ) {
+//         result += characters.charAt(Math.floor(Math.random() * charactersLength));
+//     }
+//     return result;
+// }
+
+function formatPublicKey(key) {
+    let formatted = key.substring(26);
+    formatted = formatted.slice(0, -24);
+    return formatted.replace(/\r?\n|\r/g, "");
+}
+
+function formatPrivateKey(key) {
+    let formatted = key.substring(31);
+    formatted = formatted.slice(0, -29);
+    return formatted.replace(/\r?\n|\r/g, "");
+}
+
+function unformatPublicKey(key) {
+    return "-----BEGIN PUBLIC KEY-----" + key.replace(/(.{64})/g,"$1\n") + "-----END PUBLIC KEY-----";
+}
+
+function unformatPrivateKey(key) {
+    return "-----BEGIN RSA PRIVATE KEY-----" + key.replace(/(.{64})/g,"$1\n") + "-----END RSA PRIVATE KEY-----";
 }
 
 if (!wallet.address) {
-    wallet.secret = makeSecret();
-    wallet.address = sha256(wallet.secret);
-    localStorage.setItem("walletSecret", wallet.secret)
-    localStorage.setItem("walletAddress", wallet.address)
+    const key = generateKeys();
+    wallet.secret = formatPrivateKey(key.private);
+    wallet.address = formatPublicKey(key.public);
+    localStorage.setItem("privateKey", wallet.secret)
+    localStorage.setItem("publicKey", wallet.address)
 } else {
-    wallet.secret = localStorage.getItem("walletSecret");
+    wallet.secret = localStorage.getItem("privateKey");
 }
 
-$("#wallet-address").text(wallet.address)
-$("#wallet-secret").text(wallet.secret.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim())
+$("#wallet-address").val(wallet.address)
+$("#wallet-secret").val(wallet.secret)
+// $("#wallet-secret").text(wallet.secret.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim())
 
 // load list of trusted servers from local storage
 let serverList = JSON.parse(localStorage.getItem("serverList"))
@@ -80,7 +101,7 @@ function validateBlockchain(blockchain) {
         genesisBlock.hash != sha256("genesis") ||
         genesisBlock.time != 0 ||
         genesisBlock.from != "" ||
-        genesisBlock.to != "d8f90747cafcd65366c66ab9a6264889e90e21cf72786ed040b7f4c32ecb942c" ||
+        genesisBlock.to != "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCWSW0fLPOICZJ5E0XCDWDlF+3luR05S7KEO865VCTZu9zG8Fim/uUq01RR9U9OqM3GTUapOGR8ADMSoah86IBYqjL/ZD8ComUK7yI2yyzYcD1suvEHWirym06ET/fgQI/Aqfbta84p/SO+HYXArjPqnegA+Y6XhOaHWLqDZhoexQIDAQAB" ||
         genesisBlock.amount != 1000000000 ||
         genesisBlock.image.secret != "genesis"
     ) {
@@ -174,13 +195,20 @@ $("#send-form").on("submit", e => {
 
     if (amount > 0) {
 
+        // generate signature
+        // TO DO: add transaction data
+        const signature = generateSignature(
+            unformatPublicKey(wallet.address),
+            unformatPrivateKey(wallet.secret)
+        )
+
         // send data to server
-        // to do: add signature
         for (let i = 0; i < serverList.length; i++) {
             $.post(serverList[i] + "/api/transaction", {
                 from: wallet.address,
                 to: to,
                 amount: amount,
+                signature: signature,
             })
             .done(data => { window.location.reload() })
         }
