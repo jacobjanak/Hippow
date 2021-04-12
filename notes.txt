@@ -1,7 +1,7 @@
 Phase 1
 
+Change "from" and "to" address to sha256()
 Add more security to server
-> signature
 > verify spot guessing
 > balances should be under confirmation not submission
 Add good/evil checking

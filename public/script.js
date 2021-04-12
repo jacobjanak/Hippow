@@ -77,22 +77,21 @@ function displayBlock(block, index) {
 }
 
 // retrieve blockchain info
-let bestServer = ""; // server with the longest blockchain
 let blockchain = []; // the longest blockchain
 for (let i = 0; i < serverList.length; i++) {
     $.get(serverList[i] + "/api/blockchain")
     .done(possibleBlockchain => {
-        if (validateBlockchain(possibleBlockchain)) {
+        // if (validateBlockchain(possibleBlockchain)) {
             if (possibleBlockchain.length > blockchain.length) {
-                bestServer = serverList[i];
                 blockchain = possibleBlockchain;
                 processBlockchain(blockchain)
             }
-        }
+        // }
     })
     .catch(err => console.log(err))
 }
 
+/*
 function validateBlockchain(blockchain) {
 
     // validate genesis block
@@ -120,12 +119,16 @@ function validateBlockchain(blockchain) {
         ) {
             return false;
         }
+
+        // TO DO: validate signature
+        // TO DO: validate balances
         
         // create test hash
         let stringToHash = currentBlock.time;
         stringToHash += currentBlock.from;
         stringToHash += currentBlock.to;
         stringToHash += currentBlock.amount;
+        stringToHash += currentBlock.signature;
         stringToHash += previousBlock.hash;
         const testHash = sha256(stringToHash);
 
@@ -136,6 +139,7 @@ function validateBlockchain(blockchain) {
 
     return true;
 }
+*/
 
 function processBlockchain(blockchain) {
     console.log(blockchain)
@@ -249,12 +253,18 @@ $("#secret-form").on("submit", e => {
         $('.transaction').unbind('click')
         attachTransactionClickHandler()
 
+        const signature = generateSignature(
+            unformatPublicKey(wallet.address),
+            unformatPrivateKey(wallet.secret)
+        )
+
         // send guess to server
         for (let i = 0; i < serverList.length; i++) {
             $.post(serverList[i] + "/spot", {
                 secret: guess,
                 blockIndex: currentBlockIndex,
                 wallet: wallet.address,
+                signature: signature,
             })
             .done()
         }

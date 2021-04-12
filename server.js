@@ -1,7 +1,6 @@
 // dependencies
 const express = require('express');
 const bodyParser = require('body-parser');
-// const path = require('path');
 const jwt = require('jsonwebtoken');
 const sha256 = require('js-sha256');
 const https = require('https');
@@ -61,22 +60,20 @@ app.post("/api/transaction", (req, res) => {
     const transaction = req.body;
     transaction.amount = parseInt(transaction.amount);
 
-    console.log("okay --------++++++++")
-
-    // validate signature
-    // signature proves that the sender has the private key
-    const signature = transaction.signature;
-    const verifyOptions = { algorithms: ["RS256"] };
-    const verified = jwt.verify(signature, formatKey(transaction.from), verifyOptions);
-    console.log("\n Verified: " + JSON.stringify(verified));
-    const decoded = jwt.decode(signature, {complete: true});
-    console.log(decoded)
-
     // validate transaction
     if (
         !balances[transaction.from] ||
         balances[transaction.from] < transaction.amount + 1
     ) {
+        return res.sendStatus(400);
+    }
+
+    // validate signature
+    try {
+        const signature = transaction.signature;
+        const verifyOptions = { algorithms: ["RS256"] };
+        jwt.verify(signature, formatKey(transaction.from), verifyOptions);
+    } catch (err) {
         return res.sendStatus(400);
     }
 
@@ -94,6 +91,7 @@ app.post("/api/transaction", (req, res) => {
         stringToHash += transaction.from;
         stringToHash += transaction.to;
         stringToHash += transaction.amount;
+        stringToHash += transaction.signature;
         stringToHash += prevBlock.hash;
         const hash = sha256(stringToHash);
 
@@ -116,6 +114,7 @@ app.post("/api/transaction", (req, res) => {
             from: transaction.from,
             to: transaction.to,
             amount: transaction.amount,
+            signature: transaction.signature,
             image: image,
         })
 
@@ -126,8 +125,6 @@ app.post("/api/transaction", (req, res) => {
         } else {
             balances[transaction.to] = transaction.amount;
         }
-
-        console.log(blockchain)
 
         // successfully end
         return res.sendStatus(200);
@@ -141,6 +138,15 @@ app.post("/spot", (req, res) => {
     const spot = req.body;
     const blockIndex = parseInt(spot.blockIndex);
     const block = blockchain[blockIndex];
+
+    // validate signature
+    try {
+        const signature = spot.signature;
+        const verifyOptions = { algorithms: ["RS256"] };
+        jwt.verify(signature, formatKey(spot.wallet), verifyOptions);
+    } catch (err) {
+        return res.sendStatus(400);
+    }
 
     // test if the secret was actually correct
     const testHash = sha256(block.image.url + spot.secret);
