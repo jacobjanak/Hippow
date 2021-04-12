@@ -211,7 +211,7 @@ $("#send-form").on("submit", e => {
             $.post(serverList[i] + "/api/transaction", {
                 from: wallet.address,
                 to: to,
-                amount: amount,
+                amount: amount - 1,
                 signature: signature,
             })
             .done(data => { window.location.reload() })

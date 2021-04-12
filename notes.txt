@@ -1,11 +1,7 @@
 Phase 1
 
+error handling on send form
 Change "from" and "to" address to sha256()
-Add more security to server
-> verify spot guessing
-> balances should be under confirmation not submission
-Add good/evil checking
-Redo server side code
 Mobile version
 
 Phase 2
@@ -16,4 +12,5 @@ Get someone to write a random image web scraper
 
 Phase 3
 
+Add good/evil checking
 Add memo

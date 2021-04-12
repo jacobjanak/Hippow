@@ -139,24 +139,39 @@ app.post("/spot", (req, res) => {
     const blockIndex = parseInt(spot.blockIndex);
     const block = blockchain[blockIndex];
 
-    // validate signature
-    try {
-        const signature = spot.signature;
-        const verifyOptions = { algorithms: ["RS256"] };
-        jwt.verify(signature, formatKey(spot.wallet), verifyOptions);
-    } catch (err) {
-        return res.sendStatus(400);
+    // make sure no one else already found secret
+    if (!block.image.secret) {
+
+        // validate signature
+        try {
+            const signature = spot.signature;
+            const verifyOptions = { algorithms: ["RS256"] };
+            jwt.verify(signature, formatKey(spot.wallet), verifyOptions);
+        } catch (err) {
+            return res.sendStatus(400);
+        }
+
+        // test if the secret was actually correct
+        const testHash = sha256(block.image.url + spot.secret);
+        if (testHash === block.image.hash) {     
+
+            // reward spotter with spots
+            if (balances[spot.wallet]) {
+                balances[spot.wallet] += 1;
+            } else {
+                balances[spot.wallet] = 1;
+            }
+
+            // update blockchain
+            block.image.secret = spot.secret;
+            block.image.spotter = spot.wallet;
+
+            res.sendStatus(200)
+        }
     }
 
-    // test if the secret was actually correct
-    const testHash = sha256(block.image.url + spot.secret);
-    if (testHash === block.image.hash) {
-        block.image.secret = spot.secret;
-        block.image.spotter = spot.wallet;
-        res.sendStatus(200)
-    } else {
-        res.sendStatus(400)
-    }
+    // error
+    res.sendStatus(400)
 })
 
 // start server
