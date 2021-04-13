@@ -271,8 +271,21 @@ nav > ul > li:hover {
     margin-bottom: 4px;
 }
 
-#server-submit {
+#server-submit, #import-submit {
     font-size: medium;
+}
+
+#import-submit {
+    margin-top: 4px;
+}
+
+#import-header {
+    margin-top: 64px;
+}
+
+#private-key {
+    margin-bottom: 8px;
+    max-width: 100%;
 }
 
 #transaction-container {

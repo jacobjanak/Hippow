@@ -1,21 +1,18 @@
 const jwt = require('jsonwebtoken');
 const NodeRSA = require('node-rsa');
 
-window.foo = function(bar) {
-  const key = new NodeRSA([bar, { b: 256 }]);
-  console.log(key.exportKey('public'))
-}
 
 window.generateKeys = function() {
-  const key = new NodeRSA({ b: 256 });
+  const key = new NodeRSA({ b: 512 });
   return {
     public: key.exportKey('public'),
     private: key.exportKey('private'),
   }
 }
 
-window.generateSignature = function(publicKey, privateKey) {
-  return jwt.sign({}, privateKey, {
+window.generateSignature = function(publicKey, privateKey, data) {
+  if (!data) data = {};
+  return jwt.sign(data, privateKey, {
     algorithm: "RS256"
   });
 }
@@ -23,9 +20,16 @@ window.generateSignature = function(publicKey, privateKey) {
 window.verify = function(signature, publicKey) {
   const verifyOptions = { algorithms: ["RS256"] };
   const verified = jwt.verify(signature, publicKey, verifyOptions);
-  console.log("\n Verified: " + JSON.stringify(verified));
-  const decoded = jwt.decode(signature, {complete: true});
-  console.log(decoded)
+  const decoded = jwt.decode(signature, { complete: true });
+}
+
+window.importKey = function(privateKey) {
+  const key = new NodeRSA();
+  key.importKey(privateKey);
+  return {
+    public: key.exportKey('public'),
+    private: key.exportKey('private'),
+  }
 }
 
 function App() {

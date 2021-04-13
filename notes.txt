@@ -3,6 +3,8 @@ Phase 1
 Add transaction data to signature so no one can steal signature
 Mobile version
 Improve color scheme
+Actually use private key
+Burn address
 
 Phase 2
 

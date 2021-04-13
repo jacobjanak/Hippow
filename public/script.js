@@ -32,11 +32,11 @@ function formatPrivateKey(key) {
 }
 
 function unformatPublicKey(key) {
-    return "-----BEGIN PUBLIC KEY-----" + key.replace(/(.{64})/g,"$1\n") + "-----END PUBLIC KEY-----";
+    return "-----BEGIN PUBLIC KEY-----\n" + key.replace(/(.{64})/g,"$1\n") + "\n-----END PUBLIC KEY-----";
 }
 
 function unformatPrivateKey(key) {
-    return "-----BEGIN RSA PRIVATE KEY-----" + key.replace(/(.{64})/g,"$1\n") + "-----END RSA PRIVATE KEY-----";
+    return "-----BEGIN RSA PRIVATE KEY-----\n" + key.replace(/(.{64})/g,"$1\n") + "\n-----END RSA PRIVATE KEY-----";
 }
 
 if (!wallet.address) {
@@ -296,6 +296,23 @@ $("#server-form").on("submit", e => {
     }
     localStorage.setItem("serverList", JSON.stringify(serverList))
     window.location.reload()
+})
+
+$("#import-form").on("submit", e => {
+    e.preventDefault()
+    const input = $("#private-key").val().trim();
+    try {
+        const key = importKey(unformatPrivateKey(input));
+        wallet.secret = formatPrivateKey(key.private);
+        wallet.publicKey = formatPublicKey(key.public)
+        wallet.address = sha256(wallet.publicKey);
+        localStorage.setItem("privateKey", wallet.secret)
+        localStorage.setItem("publicKey", wallet.publicKey)
+        localStorage.setItem("address", wallet.address)
+        window.location.reload()
+    } catch (err) {
+        console.log(err)
+    }
 })
 
 function attachTransactionClickHandler() {
