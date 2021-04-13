@@ -17,12 +17,11 @@
     </div>
 
     <div id="balance-container">
-        <!-- <div id="wallet-address"></div> -->
         <div><i class="fas fa-coins"></i> Balance</div>
         <div><span id="wallet-balance">0</span> Spots</div>
         <div id="wallet-info">
             <p>Public Address</p>
-            <input id="wallet-address" />
+            <div id="wallet-address"></div>
             <p>Private Key</p>
             <div style="position: relative;">
                 <input id="wallet-secret" />
@@ -82,12 +81,13 @@
         <form id="send-form">
             <h3>Send Spots</h3>
             <label for="to">Recipient Address</label><br />
-            <!-- minlength="64" maxlength="64" -->
-            <input id="to" type="text" autocomplete="off" required /><br />
+            <input id="to" type="text" autocomplete="off" minlength="64" maxlength="64" required />
+            <br />
             <label for="amount">Amount</label><br />
-            <input id="amount" type="number" min="0" required /><br />
+            <input id="amount" type="number" min="1" required /><br />
             <p id="fee">(Transaction fee = 1 Spot)</p>
             <button id="send-button">Send</button>
+            <div id="send-error"></div>
         </form>
     </div>
 

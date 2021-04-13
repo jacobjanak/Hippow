@@ -191,7 +191,7 @@ h3 {
 }
 
 input {
-    width: 516px;
+    width: 512px;
 }
 
 #send-button {
@@ -222,6 +222,13 @@ button {
 
 button:hover {
     background-color: #665B69;
+}
+
+#send-error {
+    display: none;
+    margin-top: 8px;
+    width: 512px;
+    color: red;
 }
 
 /* .nav-link {
@@ -301,6 +308,12 @@ nav > ul > li:hover {
 
 #image-container {
     margin-bottom: 32px;
+    width: 512px;
+    max-width: 100%;
+}
+
+#image-container > img {
+    max-width: 100%;
 }
 
 /* #image-container {

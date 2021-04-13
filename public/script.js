@@ -3,7 +3,9 @@ let currentBlockIndex;
 let currentBlock;
 
 let wallet = {
-    address: localStorage.getItem("publicKey"),
+    address: localStorage.getItem("address"),
+    secret: localStorage.getItem("privateKey"),
+    publicKey: localStorage.getItem("publicKey"),
     balance: 0,
 };
 
@@ -40,14 +42,14 @@ function unformatPrivateKey(key) {
 if (!wallet.address) {
     const key = generateKeys();
     wallet.secret = formatPrivateKey(key.private);
-    wallet.address = formatPublicKey(key.public);
+    wallet.publicKey = formatPublicKey(key.public)
+    wallet.address = sha256(wallet.publicKey);
     localStorage.setItem("privateKey", wallet.secret)
-    localStorage.setItem("publicKey", wallet.address)
-} else {
-    wallet.secret = localStorage.getItem("privateKey");
+    localStorage.setItem("publicKey", wallet.publicKey)
+    localStorage.setItem("address", wallet.address)
 }
 
-$("#wallet-address").val(wallet.address)
+$("#wallet-address").text(wallet.address)
 $("#wallet-secret").val(wallet.secret)
 // $("#wallet-secret").text(wallet.secret.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim())
 
@@ -180,7 +182,6 @@ $(".nav-link").on("click", function(e) {
     $("#settings-container").hide()
 
     const page = $(this).attr("data-page");
-    console.log(page)
     if (page === "home") {
         $("#home-container").show()
     }
@@ -194,28 +195,40 @@ $(".nav-link").on("click", function(e) {
 
 $("#send-form").on("submit", e => {
     e.preventDefault()
+    $("#send-error").hide()
     const to = $("#to").val().trim();
     const amount = parseInt($("#amount").val());
 
-    if (amount > 0) {
+    // generate signature
+    // TO DO: add transaction data
+    const signature = generateSignature(
+        unformatPublicKey(wallet.address),
+        unformatPrivateKey(wallet.secret)
+    )
 
-        // generate signature
-        // TO DO: add transaction data
-        const signature = generateSignature(
-            unformatPublicKey(wallet.address),
-            unformatPrivateKey(wallet.secret)
-        )
-
-        // send data to server
-        for (let i = 0; i < serverList.length; i++) {
-            $.post(serverList[i] + "/api/transaction", {
-                from: wallet.address,
-                to: to,
-                amount: amount - 1,
-                signature: signature,
-            })
-            .done(data => { window.location.reload() })
-        }
+    // send data to server
+    for (let i = 0; i < serverList.length; i++) {
+        $.post(serverList[i] + "/api/transaction", {
+            from: wallet.publicKey,
+            to: to,
+            amount: amount - 1, // must pay 1 for fee
+            signature: signature,
+        })
+        .done(data => { window.location.reload() })
+        .fail(function(err) {
+            if (err.status != 200) {
+                if (err.status === 500) {
+                    $("#send-error").text("There are no images left to assign to your transaction. This is not your fault. Please wait a while and then try again.")
+                }
+                else if (err.status === 400) {
+                    $("#send-error").text("The server could not approve your transaction.")
+                } else {
+                    $("#send-error").text("There was an error processing your transaction.")
+                }
+                $("#send-error").show()
+                $("#amount").val("")
+            }
+        })
     }
 })
 
@@ -263,7 +276,7 @@ $("#secret-form").on("submit", e => {
             $.post(serverList[i] + "/spot", {
                 secret: guess,
                 blockIndex: currentBlockIndex,
-                wallet: wallet.address,
+                wallet: wallet.publicKey,
                 signature: signature,
             })
             .done()
@@ -299,16 +312,30 @@ function attachTransactionClickHandler() {
         // $("#transaction-to").text(block.to)
         // $("#transaction-amount").text(block.amount)
 
-        let altered = false;
+        // create deep copy
+        const original = { ...currentBlock };
+        original.image = { ...currentBlock.image };
+
+        // format the block to remove useless info and prettify
+        delete currentBlock.time;
+        delete currentBlock.signature;
+        delete currentBlock.publicKey;
+        delete currentBlock.image.blockIndex;
+        delete currentBlock.image.pin;
+        delete currentBlock.image.alignment;
+        delete currentBlock.image.publicKey;
         if (!currentBlock.image.secret) {
             currentBlock.image.secret = "???";
-            altered = true;
         }
-        delete currentBlock.image.blockIndex; // just doing this because its useless
+
+        // display the block
         const transactionInfo = JSON.stringify(currentBlock, null, 4).replace(/"|,/g, '');
-        if (altered) delete currentBlock.image.secret;
         const formatted = `<pre><code>Transaction Details\n${transactionInfo}</code></pre>`;
         $("#transaction-info-container").html(formatted)
+
+        // restore the block
+        blockchain[currentBlockIndex] = original;
+        currentBlock = original;
 
         $("#transaction-container").show()
         $("#secret").prop("disabled", false);

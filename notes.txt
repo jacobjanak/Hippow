@@ -1,16 +1,23 @@
 Phase 1
 
-error handling on send form
-Change "from" and "to" address to sha256()
+Add transaction data to signature so no one can steal signature
 Mobile version
+Improve color scheme
 
 Phase 2
 
+Remove console.log
+Prettify
+Homepage
 Write docs
 Promote on social media
-Get someone to write a random image web scraper
+
+- Submit to contest -
 
 Phase 3
 
+Random image web scraper
+Transaction confirm form
 Add good/evil checking
-Add memo
+Add memo field
+Setting to display full block vs readable block
