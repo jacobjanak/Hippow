@@ -1,8 +1,8 @@
 Phase 1
 
+Preserve blockchain somehow
 Mobile version
 Improve color scheme
-Clean up URL display?
 
 Phase 2
 
@@ -22,3 +22,4 @@ Transaction confirm form
 Add good/evil checking
 Add memo field
 Setting to display full block vs readable block
+Clean up URL display so it doesn't overflow
