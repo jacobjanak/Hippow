@@ -3,7 +3,7 @@ const NodeRSA = require('node-rsa');
 
 
 window.generateKeys = function() {
-  const key = new NodeRSA({ b: 512 });
+  const key = new NodeRSA({ b: 1024 });
   return {
     public: key.exportKey('public'),
     private: key.exportKey('private'),

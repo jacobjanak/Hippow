@@ -4,7 +4,7 @@ let currentBlock;
 
 let wallet = {
     address: localStorage.getItem("address"),
-    secret: localStorage.getItem("privateKey"),
+    privateKey: localStorage.getItem("privateKey"),
     publicKey: localStorage.getItem("publicKey"),
     balance: 0,
 };
@@ -41,17 +41,17 @@ function unformatPrivateKey(key) {
 
 if (!wallet.address) {
     const key = generateKeys();
-    wallet.secret = formatPrivateKey(key.private);
+    wallet.privateKey = formatPrivateKey(key.private);
     wallet.publicKey = formatPublicKey(key.public)
     wallet.address = sha256(wallet.publicKey);
-    localStorage.setItem("privateKey", wallet.secret)
+    localStorage.setItem("privateKey", wallet.privateKey)
     localStorage.setItem("publicKey", wallet.publicKey)
     localStorage.setItem("address", wallet.address)
 }
 
 $("#wallet-address").text(wallet.address)
-$("#wallet-secret").val(wallet.secret)
-// $("#wallet-secret").text(wallet.secret.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim())
+$("#wallet-secret").val(wallet.privateKey)
+// $("#wallet-secret").text(wallet.privateKey.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim())
 
 // load list of trusted servers from local storage
 let serverList = JSON.parse(localStorage.getItem("serverList"))
@@ -209,8 +209,8 @@ $("#send-form").on("submit", e => {
     // generate signature
     // TO DO: add transaction data
     const signature = generateSignature(
-        unformatPublicKey(wallet.address),
-        unformatPrivateKey(wallet.secret),
+        unformatPublicKey(wallet.publicKey),
+        unformatPrivateKey(wallet.privateKey),
         transaction
     )
 
@@ -218,7 +218,9 @@ $("#send-form").on("submit", e => {
     for (let i = 0; i < serverList.length; i++) {
         $.post(serverList[i] + "/transaction", {
             signature: signature,
-            ...transaction,
+            from: wallet.publicKey,
+            to: to,
+            amount: amount - 1, // must pay 1 for fee
         })
         .done(data => { window.location.reload() })
         .fail(function(err) {
@@ -273,8 +275,8 @@ $("#secret-form").on("submit", e => {
         attachTransactionClickHandler()
 
         const signature = generateSignature(
-            unformatPublicKey(wallet.address),
-            unformatPrivateKey(wallet.secret)
+            unformatPublicKey(wallet.publicKey),
+            unformatPrivateKey(wallet.privateKey)
         )
 
         // send guess to server
@@ -310,10 +312,10 @@ $("#import-form").on("submit", e => {
     const input = $("#private-key").val().trim();
     try {
         const key = importKey(unformatPrivateKey(input));
-        wallet.secret = formatPrivateKey(key.private);
+        wallet.privateKey = formatPrivateKey(key.private);
         wallet.publicKey = formatPublicKey(key.public)
         wallet.address = sha256(wallet.publicKey);
-        localStorage.setItem("privateKey", wallet.secret)
+        localStorage.setItem("privateKey", wallet.privateKey)
         localStorage.setItem("publicKey", wallet.publicKey)
         localStorage.setItem("address", wallet.address)
         window.location.reload()

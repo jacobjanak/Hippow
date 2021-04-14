@@ -1,20 +1,25 @@
-Phase 1
+Phase 1.0
 
+Fix error
+Can't send money until transaction is approved
 Preserve blockchain somehow
 Mobile version
 Improve color scheme
+Homepage
 
-Phase 2
+Phase 1.1
 
+Write docs
 Remove console.log
 Prettify
-Homepage
-Write docs
+
+Phase 1.2
+
 Promote on social media
 
 - Submit to contest -
 
-Phase 3
+Phase 2
 
 Random image web scraper
 Transaction confirm form

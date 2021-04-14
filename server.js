@@ -94,11 +94,13 @@ app.post("/transaction", (req, res) => {
     transaction.from = sha256(transaction.from)
 
     // validate transaction
+    console.log(balances)
     if (
         !balances[transaction.from] ||
         balances[transaction.from] < transaction.amount + 1 ||
         transaction.from === burnAddress
     ) {
+        console.log(1)
         return res.sendStatus(400);
     }
 
@@ -106,8 +108,15 @@ app.post("/transaction", (req, res) => {
     const signature = transaction.signature;
     try {
         const verifyOptions = { algorithms: ["RS256"] };
+        console.log(signature)
+        console.log("------")
+        console.log(transaction.publicKey)
+        console.log("------")
+        console.log(formatKey(transaction.publicKey))
+        console.log("------")
         jwt.verify(signature, formatKey(transaction.publicKey), verifyOptions);
     } catch (err) {
+        console.log(2)
         return res.sendStatus(400);
     }
 
@@ -118,6 +127,7 @@ app.post("/transaction", (req, res) => {
         transaction.to != decoded.payload.to ||
         transaction.amount != decoded.payload.amount
     ) {
+        console.log(3)
         return res.sendStatus(400);
     }
 
