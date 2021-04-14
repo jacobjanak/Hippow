@@ -1,10 +1,8 @@
 Phase 1
 
-Add transaction data to signature so no one can steal signature
 Mobile version
 Improve color scheme
-Actually use private key
-Burn address
+Clean up URL display?
 
 Phase 2
 
@@ -20,6 +18,7 @@ Phase 3
 
 Random image web scraper
 Transaction confirm form
+> Fee should be taken from amount only if amount == balance
 Add good/evil checking
 Add memo field
 Setting to display full block vs readable block

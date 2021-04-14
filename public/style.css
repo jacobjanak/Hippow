@@ -288,6 +288,12 @@ nav > ul > li:hover {
     max-width: 100%;
 }
 
+#import-error {
+    display: none;
+    margin-top: 8px;
+    color: red;
+}
+
 #transaction-container {
     display: none;
     margin-top: 96px;

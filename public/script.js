@@ -81,7 +81,7 @@ function displayBlock(block, index) {
 // retrieve blockchain info
 let blockchain = []; // the longest blockchain
 for (let i = 0; i < serverList.length; i++) {
-    $.get(serverList[i] + "/api/blockchain")
+    $.get(serverList[i] + "/blockchain")
     .done(possibleBlockchain => {
         // if (validateBlockchain(possibleBlockchain)) {
             if (possibleBlockchain.length > blockchain.length) {
@@ -199,20 +199,26 @@ $("#send-form").on("submit", e => {
     const to = $("#to").val().trim();
     const amount = parseInt($("#amount").val());
 
+    // create transaction object
+    const transaction = {
+        from: wallet.publicKey,
+        to: to,
+        amount: amount - 1, // must pay 1 for fee
+    }
+
     // generate signature
     // TO DO: add transaction data
     const signature = generateSignature(
         unformatPublicKey(wallet.address),
-        unformatPrivateKey(wallet.secret)
+        unformatPrivateKey(wallet.secret),
+        transaction
     )
 
     // send data to server
     for (let i = 0; i < serverList.length; i++) {
-        $.post(serverList[i] + "/api/transaction", {
-            from: wallet.publicKey,
-            to: to,
-            amount: amount - 1, // must pay 1 for fee
+        $.post(serverList[i] + "/transaction", {
             signature: signature,
+            ...transaction,
         })
         .done(data => { window.location.reload() })
         .fail(function(err) {
@@ -300,6 +306,7 @@ $("#server-form").on("submit", e => {
 
 $("#import-form").on("submit", e => {
     e.preventDefault()
+    $("#import-error").hide()
     const input = $("#private-key").val().trim();
     try {
         const key = importKey(unformatPrivateKey(input));
@@ -311,6 +318,7 @@ $("#import-form").on("submit", e => {
         localStorage.setItem("address", wallet.address)
         window.location.reload()
     } catch (err) {
+        $("#import-error").show()
         console.log(err)
     }
 })

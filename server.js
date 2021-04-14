@@ -8,7 +8,10 @@ const https = require('https');
 // server
 const app = express();
 const PORT = process.env.PORT || 8001;
+
+// values
 const imageURL = "https://ispy-beta.herokuapp.com";
+const burnAddress = "0000000000000000000000000000000000000000000000000000000000000000";
 
 // middleware
 app.use(express.static("public"))
@@ -80,11 +83,11 @@ function formatKey(key) {
 const blockchain = [genesisBlock];
 const balances = { [genesisBlock.to]: genesisBlock.amount };
 
-app.get("/api/blockchain", (req, res) => {
+app.get("/blockchain", (req, res) => {
     res.json(blockchain)
 })
 
-app.post("/api/transaction", (req, res) => {
+app.post("/transaction", (req, res) => {
     const transaction = req.body;
     transaction.amount = parseInt(transaction.amount);
     transaction.publicKey = transaction.from;
@@ -93,17 +96,28 @@ app.post("/api/transaction", (req, res) => {
     // validate transaction
     if (
         !balances[transaction.from] ||
-        balances[transaction.from] < transaction.amount + 1
+        balances[transaction.from] < transaction.amount + 1 ||
+        transaction.from === burnAddress
     ) {
         return res.sendStatus(400);
     }
 
     // validate signature
+    const signature = transaction.signature;
     try {
-        const signature = transaction.signature;
         const verifyOptions = { algorithms: ["RS256"] };
         jwt.verify(signature, formatKey(transaction.publicKey), verifyOptions);
     } catch (err) {
+        return res.sendStatus(400);
+    }
+
+    // validate data in signature to ensure it wasn't modified
+    const decoded = jwt.decode(signature, { complete: true });
+    if (
+        transaction.publicKey != decoded.payload.from ||
+        transaction.to != decoded.payload.to ||
+        transaction.amount != decoded.payload.amount
+    ) {
         return res.sendStatus(400);
     }
 
@@ -148,6 +162,14 @@ app.post("/api/transaction", (req, res) => {
                     }
                 }
 
+                // update balances
+                balances[transaction.from] -= transaction.amount + 1;
+                if (balances[transaction.to]) {
+                    balances[transaction.to] += transaction.amount;
+                } else {
+                    balances[transaction.to] = transaction.amount;
+                }
+
                 // properly format transaction as block
                 blockchain.push({
                     hash: hash,
@@ -159,14 +181,6 @@ app.post("/api/transaction", (req, res) => {
                     signature: transaction.signature,
                     image: image,
                 })
-
-                // update balances
-                balances[transaction.from] -= transaction.amount + 1;
-                if (balances[transaction.to]) {
-                    balances[transaction.to] += transaction.amount;
-                } else {
-                    balances[transaction.to] = transaction.amount;
-                }
 
                 // successfully end
                 return res.sendStatus(200);
