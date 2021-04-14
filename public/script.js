@@ -56,7 +56,7 @@ $("#wallet-secret").val(wallet.secret)
 // load list of trusted servers from local storage
 let serverList = JSON.parse(localStorage.getItem("serverList"))
 if (!serverList) {
-    serverList = ["https://spots-cc.herokuapp.com/"];
+    serverList = ["https://spots-cc.herokuapp.com"];
 }
 $("#server-list").val(serverList.join("\n"))
 
