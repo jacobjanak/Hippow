@@ -148,7 +148,7 @@ function processBlockchain(blockchain) {
     $("#transactions-container").html(`<div id="transactions-header">Blockchain</div>`)
     for (let i = blockchain.length - 1; i >= 0; i--) {
         const block = blockchain[i];
-        if (block.to === wallet.address) {
+        if (block.to === wallet.address && block.image.secret) {
             wallet.balance += parseInt(block.amount);
         }
         if (block.from === wallet.address) {
@@ -256,6 +256,9 @@ $("#secret-form").on("submit", e => {
 
         // update wallet balance
         wallet.balance += 1;
+        if (currentBlock.to === wallet.address) {
+            wallet.balance += currentBlock.amount;
+        }
         $("#wallet-balance").text(wallet.balance)
         $("#amount").attr("max", wallet.balance)
 

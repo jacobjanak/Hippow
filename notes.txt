@@ -1,7 +1,5 @@
 Phase 1.0
 
-Fix error
-Can't send money until transaction is approved
 Preserve blockchain somehow
 Mobile version
 Improve color scheme

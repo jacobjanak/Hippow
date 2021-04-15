@@ -174,11 +174,6 @@ app.post("/transaction", (req, res) => {
 
                 // update balances
                 balances[transaction.from] -= transaction.amount + 1;
-                if (balances[transaction.to]) {
-                    balances[transaction.to] += transaction.amount;
-                } else {
-                    balances[transaction.to] = transaction.amount;
-                }
 
                 // properly format transaction as block
                 blockchain.push({
@@ -230,6 +225,13 @@ app.post("/spot", (req, res) => {
                 balances[spot.wallet] += 1;
             } else {
                 balances[spot.wallet] = 1;
+            }
+
+            // update balances
+            if (balances[block.to]) {
+                balances[block.to] += block.amount;
+            } else {
+                balances[block.to] = block.amount;
             }
 
             // update blockchain
