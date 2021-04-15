@@ -1,9 +1,8 @@
 Phase 1.0
 
+Homepage
 Preserve blockchain somehow
 Mobile version
-Improve color scheme
-Homepage
 
 Phase 1.1
 
@@ -19,6 +18,10 @@ Promote on social media
 
 Phase 2
 
+Actually use blocks properly
+> Don't overwrite entire json file for a spot
+Improve color scheme
+Rename?
 Random image web scraper
 Transaction confirm form
 > Fee should be taken from amount only if amount == balance

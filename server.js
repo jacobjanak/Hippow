@@ -1,4 +1,5 @@
 // dependencies
+const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
@@ -61,6 +62,11 @@ function insertImage(images, image) {
     if (images.length === 0) images.push(image);
 }
 
+// RSA signature util
+function formatKey(key) {
+    return "-----BEGIN PUBLIC KEY-----\n" + key.replace(/(.{64})/g,"$1\n") + "\n-----END PUBLIC KEY-----";
+}
+
 // create genesis block
 const hash = sha256("genesis");
 const genesisBlock = {
@@ -74,14 +80,32 @@ const genesisBlock = {
     }
 };
 
-// RSA signature util
-function formatKey(key) {
-    return "-----BEGIN PUBLIC KEY-----\n" + key.replace(/(.{64})/g,"$1\n") + "\n-----END PUBLIC KEY-----";
-}
-
 // begin blockchain
-const blockchain = [genesisBlock];
-const balances = { [genesisBlock.to]: genesisBlock.amount };
+const blockchain = [];
+const balances = {};
+fs.readFile("blockchain.json", "utf8", (err, data) => {
+    if (err) return console.error(err);
+    const parsed = JSON.parse("[" + data + "]");
+    for (let i = 0; i < parsed.length; i++) {
+        const block = parsed[i];
+        blockchain.push(block)
+
+        // update balances
+        balances[block.from] -= block.amount + 1;
+        if (block.image.secret) {
+            if (balances[block.to]) {
+                balances[block.to] += block.amount;
+            } else {
+                balances[block.to] = block.amount;
+            }
+            if (balances[block.image.spotter]) {
+                balances[block.image.spotter] += 1;
+            } else {
+                balances[block.image.spotter] = 1;
+            }
+        }
+    }
+})
 
 app.get("/blockchain", (req, res) => {
     res.json(blockchain)
@@ -94,13 +118,11 @@ app.post("/transaction", (req, res) => {
     transaction.from = sha256(transaction.from)
 
     // validate transaction
-    console.log(balances)
     if (
         !balances[transaction.from] ||
         balances[transaction.from] < transaction.amount + 1 ||
         transaction.from === burnAddress
     ) {
-        console.log(1)
         return res.sendStatus(400);
     }
 
@@ -108,15 +130,8 @@ app.post("/transaction", (req, res) => {
     const signature = transaction.signature;
     try {
         const verifyOptions = { algorithms: ["RS256"] };
-        console.log(signature)
-        console.log("------")
-        console.log(transaction.publicKey)
-        console.log("------")
-        console.log(formatKey(transaction.publicKey))
-        console.log("------")
         jwt.verify(signature, formatKey(transaction.publicKey), verifyOptions);
     } catch (err) {
-        console.log(2)
         return res.sendStatus(400);
     }
 
@@ -127,7 +142,6 @@ app.post("/transaction", (req, res) => {
         transaction.to != decoded.payload.to ||
         transaction.amount != decoded.payload.amount
     ) {
-        console.log(3)
         return res.sendStatus(400);
     }
 
@@ -144,14 +158,10 @@ app.post("/transaction", (req, res) => {
 
             // transaction can't be processed without an image
             if (images.length > 0) {
-                
-                // store current time in transaction
-                const currentTime = new Date().getTime(); //NOTE: do we even need times?
-                
-                // grab previous block in blockchain for hash
-                const prevBlock = blockchain[blockchain.length - 1];
 
                 // create hash
+                const currentTime = new Date().getTime();
+                const prevBlock = blockchain[blockchain.length - 1];
                 let stringToHash = currentTime;
                 stringToHash += transaction.from;
                 stringToHash += transaction.to;
@@ -176,7 +186,7 @@ app.post("/transaction", (req, res) => {
                 balances[transaction.from] -= transaction.amount + 1;
 
                 // properly format transaction as block
-                blockchain.push({
+                const block = {
                     hash: hash,
                     time: currentTime,
                     from: transaction.from,
@@ -185,6 +195,12 @@ app.post("/transaction", (req, res) => {
                     publicKey: transaction.publicKey,
                     signature: transaction.signature,
                     image: image,
+                };
+                blockchain.push(block)
+
+                // store data in json file
+                fs.appendFile('blockchain.json', "," + JSON.stringify(block), 'utf8', err => {
+                    if (err) console.error(err);
                 })
 
                 // successfully end
@@ -238,6 +254,13 @@ app.post("/spot", (req, res) => {
             block.image.secret = spot.secret;
             block.image.spotter = spot.wallet;
             block.image.publicKey = spot.publicKey;
+
+            // completely overwrite the file
+            let stringified = JSON.stringify(blockchain);
+            stringified = stringified.substr(1, stringified.length - 2)
+            fs.writeFile('blockchain.json', stringified, 'utf8', err => {
+                if (err) console.error(err);
+            })
 
             return res.sendStatus(200)
         }
