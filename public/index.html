@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spots.cc</title>
+    <title>Hippow.cc</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css" />
     <link rel="stylesheet" href="/fontawesome/css/all.css" />
     <link rel="stylesheet" href="/style.css" />
@@ -18,7 +18,7 @@
 
     <div id="balance-container">
         <div><i class="fas fa-coins"></i> Balance</div>
-        <div><span id="wallet-balance">0</span> Spots</div>
+        <div><span id="wallet-balance">0</span> coins</div>
         <div id="wallet-info">
             <p>Public Address</p>
             <div id="wallet-address"></div>
@@ -86,7 +86,7 @@
             By simply visiting this website, you've already created your own personal Hippow wallet. Your wallet is currently displaying your balance in the top right corner of the screen. Hover over your wallet to see your public address and your private key.
         </section>
         <section>
-            Like with any other blockchain, your public address is safe to give out. That is the address people use to send you Hippow coins. On the other hand, your private key must be kept private. Anyone who has your private key can steal all your coins!
+            Like with any other blockchain, your public address is safe to give out. That is the address people use to send you Hippow coins. On the other hand, your private key must be kept private at all times. Anyone who has your private key can steal your coins!
         </section>
         <section>
             Now that you have a wallet, it's time to fill it up. You can earn Hippow coins by helping to secure the Hippow network. This process is simple. Here's how to earn coins:
@@ -98,10 +98,16 @@
             2. Click on a "Pending" transaction. Try refreshing the blockchain if there aren't any pending transactions.
         </section>
         <section>
-            3. Every transaction has an image associated with it. To approve the transaction, you must be the first person to guess the secret word for that image. You have unlimited guesses. Guess correctly to earn Hippow coins!
+            3. Every transaction has an image associated with it. To approve the transaction, you must be the first person to guess the secret word for that image. You have unlimited guesses. Correct guesses earn Hippow coins!
         </section>
         <section>
-            4. Here are some guessing tips: The secret word will always be an object that you can see somewhere in the image, usually in the background. It will always be a noun but never a proper noun.
+            4. Here are some guessing tips: The secret word will always be an object that you can see somewhere in the image, usually in the background. It will always be a noun, but never a proper noun. To familiarize yourself with this process, you can click on any "Confirmed" transaction to see what the secret word was for that transaction's image.
+        </section>
+        <section>
+            <h2 class="header">Detailed Explanation</h2>
+        </section>
+        <section>
+            Coming soon.
         </section>
         <!-- <section>
             <div>Bitcoin estimated power consumption:</div>
@@ -121,13 +127,13 @@
 
     <div id="send-container">
         <form id="send-form">
-            <h3>Send Spots</h3>
+            <h3>Send Hippow Coins</h3>
             <label for="to">Recipient Address</label><br />
             <input id="to" type="text" autocomplete="off" minlength="64" maxlength="64" required />
             <br />
             <label for="amount">Amount</label><br />
             <input id="amount" type="number" min="1" required /><br />
-            <p id="fee">(Transaction fee = 1 Spot)</p>
+            <p id="fee">(Transaction fee = 1 coin)</p>
             <button id="send-button">Send</button>
             <div id="send-error"></div>
         </form>
@@ -158,7 +164,7 @@
     <div id="transaction-container">
         <form id="secret-form">
             <p class="secret-info">This transaction is still pending. To confirm this transaction, be the first to guess the secret word by spotting something in the image below. You have unlimited guesses and it is not case-sensitive.</p>
-            <p class="secret-info">You will recieve 1 Spot for confirming this transaction.</p>
+            <p class="secret-info">You will recieve 1 coin for confirming this transaction.</p>
             <label for="secret">Guess the secret word</label><br />
             <input id="secret" type="text" autocomplete="off" required />
             <button>Submit</button>
