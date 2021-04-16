@@ -1,7 +1,7 @@
 Phase 1.0
 
+Get DB to work on Heroku
 SSL
-Persist blockchain
 Homepage
 Mobile version
 

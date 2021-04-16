@@ -1,50 +1,17 @@
 // dependencies
-const fs = require("fs");
 const express = require("express");
 const bodyParser = require("body-parser");
+const https = require("https");
 const jwt = require("jsonwebtoken");
 const sha256 = require("js-sha256");
-const https = require("https");
-
-// values
-const imageURL = "https://ispy-beta.herokuapp.com";
-const burnAddress = "0000000000000000000000000000000000000000000000000000000000000000";
 
 // database
 const admin = require("firebase-admin");
 const sdk = require("./firebase-adminsdk.json");
 
-admin.initializeApp({
-    credential: admin.credential.cert(sdk)
-})
-
-const db = admin.firestore();
-
-// load blockchain
-db.collection('hippow').doc('blockchain').get()
-.then(doc => {
-    if (!doc.exists) console.error("No such document");
-    console.log(doc.data())
-})
-.catch(err => { console.error(err) })
-
-// GENESIS BLOCK
-// db.collection("hippow").doc("blockchain").set({
-//     blockchain: [{
-//         "hash":"aeebad4a796fcc2e15dc4c6061b45ed9b373f26adfc798ca7d2d8cc58182718e",
-//         "time":0,
-//         "from":"",
-//         "to":"e76111c368681a8c533e31577efe6a58a47439c39165e359a45de69d022e471c",
-//         "amount":1000000000,
-//         "image":{"secret":"genesis"}
-//     }]
-// })
-// .then(() => {
-//     console.log("Document successfully written!");
-// })
-// .catch((error) => {
-//     console.error("Error writing document: ", error);
-// });
+// values
+const imageURL = "https://ispy-beta.herokuapp.com";
+const burnAddress = "0000000000000000000000000000000000000000000000000000000000000000";
 
 // server
 const app = express();
@@ -61,6 +28,38 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 })
+
+// initialize database
+admin.initializeApp({ credential: admin.credential.cert(sdk) })
+const db = admin.firestore();
+
+// load blockchain
+let blockchain = [];
+const balances = {};
+db.collection('hippow').doc('blockchain').get()
+.then(doc => {
+    if (!doc.exists) console.error("No such document");
+    blockchain = doc.data().blockchain;
+
+    // update balances
+    for (let i = 0; i < blockchain.length; i++) {
+        const block = blockchain[i];
+        balances[block.from] -= block.amount + 1;
+        if (block.image.secret) {
+            if (balances[block.to]) {
+                balances[block.to] += block.amount;
+            } else {
+                balances[block.to] = block.amount;
+            }
+            if (balances[block.image.spotter]) {
+                balances[block.image.spotter] += 1;
+            } else {
+                balances[block.image.spotter] = 1;
+            }
+        }
+    }
+})
+.catch(err => { console.error(err) })
 
 // get images
 let images;
@@ -83,11 +82,8 @@ https.get(imageURL + "/images", res => {
 function insertImage(images, image) {
     for (let i = 0; i < images.length; i++) {
         if (image.hash < images[i].hash) {
-            if (i === 0) {
-                images.unshift(image)
-            } else {
-                images.splice(i, 0, image)
-            }
+            if (i === 0) images.unshift(image);
+            else images.splice(i, 0, image);
             break
         }
         else if (i === images.length - 1) {
@@ -102,46 +98,6 @@ function insertImage(images, image) {
 function formatKey(key) {
     return "-----BEGIN PUBLIC KEY-----\n" + key.replace(/(.{64})/g,"$1\n") + "\n-----END PUBLIC KEY-----";
 }
-
-// create genesis block
-const hash = sha256("genesis");
-const genesisBlock = {
-    hash: hash,
-    time: 0,
-    from: "",
-    to: "e76111c368681a8c533e31577efe6a58a47439c39165e359a45de69d022e471c",
-    amount: 1000000000,
-    image: {
-        secret: "genesis"
-    }
-};
-
-// begin blockchain
-const blockchain = [];
-const balances = {};
-fs.readFile("blockchain.json", "utf8", (err, data) => {
-    if (err) return console.error(err);
-    const parsed = JSON.parse("[" + data + "]");
-    for (let i = 0; i < parsed.length; i++) {
-        const block = parsed[i];
-        blockchain.push(block)
-
-        // update balances
-        balances[block.from] -= block.amount + 1;
-        if (block.image.secret) {
-            if (balances[block.to]) {
-                balances[block.to] += block.amount;
-            } else {
-                balances[block.to] = block.amount;
-            }
-            if (balances[block.image.spotter]) {
-                balances[block.image.spotter] += 1;
-            } else {
-                balances[block.image.spotter] = 1;
-            }
-        }
-    }
-})
 
 app.get("/blockchain", (req, res) => {
     res.json(blockchain)
@@ -234,10 +190,8 @@ app.post("/transaction", (req, res) => {
                 };
                 blockchain.push(block)
 
-                // store data in json file
-                fs.appendFile('blockchain.json', "," + JSON.stringify(block), 'utf8', err => {
-                    if (err) console.error(err);
-                })
+                // update database
+                db.collection("hippow").doc("blockchain").set({ blockchain })
 
                 // successfully end
                 return res.sendStatus(200);
@@ -291,12 +245,8 @@ app.post("/spot", (req, res) => {
             block.image.spotter = spot.wallet;
             block.image.publicKey = spot.publicKey;
 
-            // completely overwrite the file
-            let stringified = JSON.stringify(blockchain);
-            stringified = stringified.substr(1, stringified.length - 2)
-            fs.writeFile('blockchain.json', stringified, 'utf8', err => {
-                if (err) console.error(err);
-            })
+            // update database
+            db.collection("hippow").doc("blockchain").set({ blockchain })
 
             return res.sendStatus(200)
         }
