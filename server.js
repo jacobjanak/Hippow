@@ -1,18 +1,54 @@
 // dependencies
-const fs = require('fs');
-const express = require('express');
-const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
-const sha256 = require('js-sha256');
-const https = require('https');
-
-// server
-const app = express();
-const PORT = process.env.PORT || 8001;
+const fs = require("fs");
+const express = require("express");
+const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
+const sha256 = require("js-sha256");
+const https = require("https");
 
 // values
 const imageURL = "https://ispy-beta.herokuapp.com";
 const burnAddress = "0000000000000000000000000000000000000000000000000000000000000000";
+
+// database
+const admin = require("firebase-admin");
+const sdk = require("./firebase-adminsdk.json");
+
+admin.initializeApp({
+    credential: admin.credential.cert(sdk)
+})
+
+const db = admin.firestore();
+
+// load blockchain
+db.collection('hippow').doc('blockchain').get()
+.then(doc => {
+    if (!doc.exists) console.error("No such document");
+    console.log(doc.data())
+})
+.catch(err => { console.error(err) })
+
+// GENESIS BLOCK
+// db.collection("hippow").doc("blockchain").set({
+//     blockchain: [{
+//         "hash":"aeebad4a796fcc2e15dc4c6061b45ed9b373f26adfc798ca7d2d8cc58182718e",
+//         "time":0,
+//         "from":"",
+//         "to":"e76111c368681a8c533e31577efe6a58a47439c39165e359a45de69d022e471c",
+//         "amount":1000000000,
+//         "image":{"secret":"genesis"}
+//     }]
+// })
+// .then(() => {
+//     console.log("Document successfully written!");
+// })
+// .catch((error) => {
+//     console.error("Error writing document: ", error);
+// });
+
+// server
+const app = express();
+const PORT = process.env.PORT || 8001;
 
 // middleware
 app.use(express.static("public"))

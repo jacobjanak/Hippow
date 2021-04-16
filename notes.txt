@@ -1,5 +1,6 @@
 Phase 1.0
 
+SSL
 Persist blockchain
 Homepage
 Mobile version
@@ -7,6 +8,7 @@ Mobile version
 Phase 1.1
 
 Write docs
+Change all names to Hippow
 Remove console.log
 Prettify
 package.json and package-lock
@@ -19,6 +21,8 @@ Promote on social media
 
 Phase 2
 
+Fix hippo image
+Change single quotes to double
 Blockchain refresh button
 Actually use blocks properly
 > Don't overwrite entire json file for a spot
