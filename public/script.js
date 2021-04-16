@@ -351,6 +351,7 @@ function attachTransactionClickHandler() {
         delete currentBlock.signature;
         delete currentBlock.publicKey;
         delete currentBlock.image.blockIndex;
+        delete currentBlock.image.url;
         delete currentBlock.image.pin;
         delete currentBlock.image.alignment;
         delete currentBlock.image.publicKey;
