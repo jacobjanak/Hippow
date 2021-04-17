@@ -26,53 +26,55 @@ app.use((req, res, next) => {
     next();
 })
 
+let blockchain = []
 // database
-if (process.env.project_id) {
-    admin.initializeApp({ credential: admin.credential.cert({
-        project_id: process.env.project_id,
-        type: process.env.type,
-        private_key_id: process.env.private_key_id,
-        private_key: process.env.private_key,
-        client_email: process.env.client_email,
-        client_id: process.env.client_id,
-        auth_uri: process.env.auth_uri,
-        token_uri: process.env.token_uri,
-        auth_provider_x509_cert_url: process.env.auth_provider_x509_cert_url,
-        client_x509_cert_url: process.env.client_x509_cert_url,
-    })})
-} else {
-    const sdk = require("./firebase-adminsdk.json");
-    admin.initializeApp({ credential: admin.credential.cert(sdk) })
-}
-const db = admin.firestore();
+// if (process.env.project_id) {
+//     admin.initializeApp({ credential: admin.credential.cert({
+//         project_id: process.env.project_id,
+//         type: process.env.type,
+//         private_key_id: process.env.private_key_id,
+//         private_key: process.env.private_key,
+//         client_email: process.env.client_email,
+//         client_id: process.env.client_id,
+//         auth_uri: process.env.auth_uri,
+//         token_uri: process.env.token_uri,
+//         auth_provider_x509_cert_url: process.env.auth_provider_x509_cert_url,
+//         client_x509_cert_url: process.env.client_x509_cert_url,
+//     })})
+// } else {
+//     const sdk = require("./firebase-adminsdk.json");
+//     console.log(sdk)
+//     admin.initializeApp({ credential: admin.credential.cert(sdk) })
+// }
+// const db = admin.firestore();
 
-// load blockchain
-let blockchain = [];
-const balances = {};
-db.collection('hippow').doc('blockchain').get()
-.then(doc => {
-    if (!doc.exists) console.error("No such document");
-    blockchain = doc.data().blockchain;
+// // load blockchain
+// let blockchain = [];
+// const balances = {};
+// db.collection('hippow').doc('blockchain').get()
+// .then(doc => {
+//     if (!doc.exists) console.error("No such document");
+//     blockchain = doc.data().blockchain;
 
-    // update balances
-    for (let i = 0; i < blockchain.length; i++) {
-        const block = blockchain[i];
-        balances[block.from] -= block.amount + 1;
-        if (block.image.secret) {
-            if (balances[block.to]) {
-                balances[block.to] += block.amount;
-            } else {
-                balances[block.to] = block.amount;
-            }
-            if (balances[block.image.spotter]) {
-                balances[block.image.spotter] += 1;
-            } else {
-                balances[block.image.spotter] = 1;
-            }
-        }
-    }
-})
-.catch(err => { console.error(err) })
+//     // update balances
+//     for (let i = 0; i < blockchain.length; i++) {
+//         const block = blockchain[i];
+//         balances[block.from] -= block.amount + 1;
+//         if (block.image.secret) {
+//             if (balances[block.to]) {
+//                 balances[block.to] += block.amount;
+//             } else {
+//                 balances[block.to] = block.amount;
+//             }
+//             if (balances[block.image.spotter]) {
+//                 balances[block.image.spotter] += 1;
+//             } else {
+//                 balances[block.image.spotter] = 1;
+//             }
+//         }
+//     }
+// })
+// .catch(err => { console.error(err) })
 
 // get images
 let images;
@@ -111,6 +113,21 @@ function insertImage(images, image) {
 function formatKey(key) {
     return "-----BEGIN PUBLIC KEY-----\n" + key.replace(/(.{64})/g,"$1\n") + "\n-----END PUBLIC KEY-----";
 }
+
+app.get("/test", (req, res) => {
+    res.json({
+        project_id: process.env.project_id,
+        type: process.env.type,
+        private_key_id: process.env.private_key_id,
+        private_key: process.env.private_key,
+        client_email: process.env.client_email,
+        client_id: process.env.client_id,
+        auth_uri: process.env.auth_uri,
+        token_uri: process.env.token_uri,
+        auth_provider_x509_cert_url: process.env.auth_provider_x509_cert_url,
+        client_x509_cert_url: process.env.client_x509_cert_url,
+    })
+})
 
 app.get("/blockchain", (req, res) => {
     res.json(blockchain)

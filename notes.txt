@@ -11,6 +11,7 @@ Phase 1.1
 
 Write docs
 Change all names to Hippow
+> Heroku, Github, etc
 Remove console.log
 Prettify
 package.json and package-lock
@@ -23,7 +24,6 @@ Promote on social media
 
 Phase 2
 
-Fix hippo image
 Change single quotes to double
 Blockchain refresh button
 Actually use blocks properly
