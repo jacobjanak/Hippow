@@ -1,9 +1,9 @@
 Phase 1.0
 
-SSL
+Responsive version
 Mobile version
 Browser tab image
-Pay for Heroku
+App is in development mode warning
 
 Phase 1.1
 
@@ -22,6 +22,8 @@ Promote on social media
 
 Phase 2
 
+Reduce file size of image
+Meta data
 Some of the dependencies are unnecessary
 Change single quotes to double
 Blockchain refresh button

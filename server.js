@@ -27,12 +27,12 @@ app.use((req, res, next) => {
 })
 
 // database
-if (process.env.project_id) {
+if (process.env.NODE_ENV === "production") {
     admin.initializeApp({ credential: admin.credential.cert({
         project_id: process.env.project_id,
         type: process.env.type,
         private_key_id: process.env.private_key_id,
-        private_key: process.env.private_key.replace(/\\n/g, '\n'),
+        private_key: process.env.private_key.replace(/\\n/g, "\n"),
         client_email: process.env.client_email,
         client_id: process.env.client_id,
         auth_uri: process.env.auth_uri,
@@ -42,7 +42,6 @@ if (process.env.project_id) {
     })})
 } else {
     const sdk = require("./firebase-adminsdk.json");
-    console.log(sdk)
     admin.initializeApp({ credential: admin.credential.cert(sdk) })
 }
 const db = admin.firestore();

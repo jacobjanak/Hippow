@@ -2,31 +2,41 @@
     font-family: 'Courier New', Courier, monospace;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
     background-color: #FBEAFF;
+    width: 100vw; /* prevent scroll bar from moving content */
+}
+
+#content-container {
+    position: absolute;
+    top: 96px;
+    left: 256px;
+    right: 0;
+    max-width: 768px;
+    margin-right: 24px;
     padding-bottom: 128px;
 }
 
-.fa-check-circle {
-    color: #00C9B9;
+@media only screen and (min-width: 1280px) {
+    #content-container {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin: 96px auto 0;
+        width: 768px;
+    }
 }
 
-.fa-exclamation-circle {
-    color: #EEAB8E;
-}
-
-/* adjust the words next to a icon so that they're in line with other words */
-.adjust-left {
-    padding-right: 3px;
-}
-
+/* NAVBAR */
 nav {
     position: fixed;
-    left: 256px;
     top: 16px;
     z-index: 100;
 }
-
 .nav-link {
     cursor: pointer;
     margin-right: 16px;
@@ -37,13 +47,12 @@ nav {
     border-radius: 16px;
     border: 1px #B4A7B7 solid;
 }
-
 nav > ul > li:hover {
-    /* width: 300px;
-    height: 200px; */
     background-color: #665B69;
 }
+/* END NAVBAR */
 
+/* BLOCKCHAIN DISPLAY */
 #transactions-container {
     display: none; /* hidden until all transactions are loaded in */
     direction: rtl; /* move scrollbar to left side */
@@ -58,39 +67,35 @@ nav > ul > li:hover {
     color: white;
     z-index: 100;
 }
-
-/* hide scrollbar */
-/* #transactions-container::-webkit-scrollbar {
+/* hide scrollbar
+#transactions-container::-webkit-scrollbar {
     display: none;
 } */
-
 #transactions-header {
     direction: ltr; /* move scrollbar to left side */
     padding: 26px 16px 8px;
     border-bottom: 1px #B4A7B7 solid;
     text-align: center;
 }
-
 .transaction {
     direction: ltr; /* move scrollbar to left side */
     cursor: pointer;
     padding: 16px;
     border-bottom: 1px #B4A7B7 solid;
 }
-
 .transaction:hover {
     background-color: #665B69;
 }
-
 .transaction.active {
     background-color: #665B69;
 }
-
 .transaction > .status {
     text-align: right;
     margin-bottom: 4px;
 }
+/* END BLOCKCHAIN DISPLAY */
 
+/* WALLET DISPLAY */
 #balance-container {
     position: fixed;
     top: 16px;
@@ -102,31 +107,20 @@ nav > ul > li:hover {
     border-radius: 16px;
     border: 1px #B4A7B7 solid;
     z-index: 1000;
-    /* transition: width 2s ease-out 100ms; */
 }
-
-#balance-container:hover {
-    /* width: 300px;
-    height: 200px; */
-    /* background-color: #B4A7B7; */
-}
-
 #wallet-info {
     margin-top: 16px;
     padding-left: 16px;
     padding-bottom: 16px;
     display: none;
 }
-
 #wallet-address {
     margin-bottom: 16px;
     font-size: small;
 }
-
 #wallet-secret {
     position: relative;
 }
-
 #cover-up {
     position: absolute;
     top: 0;
@@ -135,112 +129,82 @@ nav > ul > li:hover {
     bottom: 0;
     background-color: #4E4351;
 }
-
 #show {
     cursor: pointer;
     margin-left: auto;
 }
+/* END WALLET DISPLAY */
 
-#home-container {
-    position: relative;
-    margin-top: 96px;
-    padding-left: 256px;
-    padding-right: 256px;
-    min-width: 320px;
-    max-width: 768px;
+/* HOME PAGE */
+#home-container {}
+#homepage-banner {
+    font-size: x-large;
+    margin-top: 0;
 }
-
-#homepage-header {
-    font-size: xx-large;
-}
-
 section {
     margin-top: 32px;
 }
-
 .header {
     font-size: x-large;
     margin-bottom: 8px;
 }
-
 .big-letter {
     font-size: 2em;
     margin-right: 2px;
 }
-
-img#hippow {
+img#hippow1 {
     position: absolute;
     top: 24px;
-    left: 512px;
+    right: 0;
 }
-
 img#hippow2 {
-    /*margin-top: 32px;*/
     width: 512px;
 }
-
 img#hippow3 {
     float: right;
     margin-right: 200px;
     width: 256px;
 }
-
 #hippow3-container {
     margin: 0 !important;
     height: 64px;
-    /*position: absolute;
-    right: 200px;*/
 }
-
 .justify-center {
     display: flex;
     justify-content: center;
 }
-
 #equation-image {
-    /*margin-left: auto;*/
-    /*margin-right: auto;*/
     width: 160px;
     margin-bottom: 8px;
 }
-
 #equation-subtext {
     text-align: center;
 }
+/* END HOME PAGE */
 
+/* SEND PAGE */
 #send-container {
     display: none;
     flex-direction: row;
     justify-content: center;
-    margin-top: 96px;
 }
-
-h1, h2, h3, h4, h5, h6 {
-    /*color: #4E4351;*/
-    color: black;
-}
-
 h3 {
     margin-bottom: 32px;
     text-align: center;
     font-size: x-large;
 }
-
 #to {
     margin-bottom: 16px;
 }
-
 #fee {
     text-align: right;
     font-size: small;
     margin-top: 2px;
     margin-bottom: 8px;
 }
-
 input {
     width: 512px;
 }
-
 #send-button {
     cursor: pointer;
     margin-top: 8px;
@@ -252,11 +216,9 @@ input {
     border-radius: 16px;
     border: 1px #B4A7B7 solid;
 }
-
 #send-button:hover {
     background-color: #665B69;
 }
-
 button {
     cursor: pointer;
     padding: 4px 8px;
@@ -266,128 +228,98 @@ button {
     border-radius: 16px;
     border: 1px #B4A7B7 solid;
 }
-
 button:hover {
     background-color: #665B69;
 }
-
 #send-error {
     display: none;
     margin-top: 8px;
     width: 512px;
     color: red;
 }
+/* END SEND PAGE */
 
-/* .nav-link {
-    cursor: pointer;
-    margin-right: 16px;
-    padding: 8px 16px;
-    display: inline-block;
-    background-color: #4E4351;
-    color: white;
-    border-radius: 16px;
-    border: 1px #B4A7B7 solid;
-}
-
-nav > ul > li:hover {
-    /* width: 300px;
-    height: 200px; */
-    /* background-color: #665B69; */
-/* } */
-
+/* SETTINGS PAGE */
 #settings-container {
     display: none;
-    margin-top: 96px;
-    padding-left: 256px;
-    padding-right: 256px;
-    min-width: 320px;
-    max-width: 768px;
 }
-
 .small {
     font-size: small;
 }
-
 #server-list {
     margin-bottom: 8px;
     max-width: 100%;
-    width: 378px;
+    width: 512px;
 }
-
 #server-list-info {
     margin-bottom: 4px;
 }
-
 #server-submit, #import-submit {
     font-size: medium;
 }
-
 #import-submit {
     margin-top: 4px;
 }
-
 #import-header {
     margin-top: 64px;
 }
-
 #private-key {
     margin-bottom: 8px;
     max-width: 100%;
 }
-
 #import-error {
     display: none;
     margin-top: 8px;
     color: red;
 }
+/* END SETTINGS PAGE */
 
+/* TRANSACTION DISPLAY CONTAINER */
 #transaction-container {
     display: none;
-    margin-top: 96px;
-    padding-left: 256px;
 }
-
+#secret-form {
+    max-width: 512px;
+}
+#secret {
+    max-width: 256px;
+}
 .secret-info {
     margin-bottom: 16px;
     max-width: 768px;
 }
-
 .secret-info:last-of-type {
     margin-bottom: 32px;
 }
-
-#secret-form {
-}
-
 #result {
     margin-top: 4px;
     height: 32px;
 }
-
 #confirmed-container {
     margin-bottom: 8px;
 }
-
 #genesis-container {
     margin-bottom: 32px;
 }
-
 #image-container {
     margin-bottom: 32px;
     width: 512px;
     max-width: 100%;
 }
-
 #image-container > img {
     max-width: 100%;
 }
+/* END TRANSACTION DISPLAY CONTAINER */
 
-/* #image-container {
-    height: 450px;
-    width: 600px;
+.fa-check-circle {
+    color: #00C9B9;
 }
 
-img {
-    max-height: 100%;
-    max-width: 100%;
-} */
+.fa-exclamation-circle {
+    color: #EEAB8E;
+}
+
+/* adjust the words next to a icon so that they're in line with other words */
+.adjust-left {
+    padding-right: 3px;
+}
