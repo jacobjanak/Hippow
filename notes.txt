@@ -4,6 +4,8 @@ Get DB to work on Heroku
 SSL
 Homepage
 Mobile version
+Browser tab image
+Pay for Heroku
 
 Phase 1.1
 
