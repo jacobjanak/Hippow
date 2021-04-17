@@ -1,8 +1,8 @@
 Phase 1.0
 
-Responsive version
+Change balance to wallet
 Mobile version
-Browser tab image
+> transaction details just overflows
 App is in development mode warning
 
 Phase 1.1

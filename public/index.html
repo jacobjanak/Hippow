@@ -33,9 +33,25 @@
         </div>
     </div>
 
+    <div id="menu-container">
+        <div id="menu-button">
+            <div><i class="fas fa-bars"></i> Menu</div>
+        </div>
+            
+            <div id="menu-popup">
+                <ul>
+                    <li class="">Home</li>
+                    <li class="">Wallet</li>
+                    <li class="">Send</li>
+                    <li class="nonessential">Blockchain</li>
+                    <li class="nonessential">Config</li>
+                </ul>
+            </div>
+    </div>
+
     <div id="content-container">
 
-        <nav>
+        <nav id="nav-container">
             <ul>
                 <li class="nav-link" data-page="home">
                     <i class="fas fa-home"></i> Home
@@ -43,15 +59,16 @@
                 <li class="nav-link" data-page="send">
                     <i class="fas fa-paper-plane"></i> Send
                 </li>
-                <li class="nav-link" data-page="settings">
+                <li class="nav-link nonessential" data-page="">
+                    <i class="fas"></i> Blockchain
+                </li>
+                <li class="nav-link nonessential" data-page="settings">
                     <i class="fas fa-cog"></i> Config
                 </li>
             </ul>
         </nav>
 
         <div id="home-container">
-            <img id="hippow1" src="images/hippow1.png" />
-            
             <section id="homepage-banner">
                 <div><span class="big-letter">H</span>uman</div>
                 <div><span class="big-letter">I</span>ntelligence</div>
@@ -60,7 +77,7 @@
                 <div><span class="big-letter">O</span>f</div>
                 <div><span class="big-letter">W</span>ork</div>
             </section>
-            
+            <img id="hippow1" src="images/hippow1.png" /> 
             <section>
                 Proof-of-work is currently the most popular method of securing blockchains. But, most proof-of-work blockchains have one major flaw: they're not scalable. They're slow, they're inefficient, and they require a ton of energy.
             </section>
@@ -91,9 +108,6 @@
             <section>
                 Here are some tips for guessing: The secret word will always be an object that you can see somewhere in the image, usually in the background. It will always be a noun, but never a proper noun. To familiarize yourself with this process, you can click on any "Confirmed" transaction to see what the secret word was for that transaction's image.
             </section>
-    <!--         <section id="hippow3-container">
-                <img id="hippow3" src="images/hippow7.png" />
-            </section> -->
             <section>
                 <div class="justify-center">
                     <img id="hippow2" src="images/hippow2.png" />
@@ -102,11 +116,9 @@
             <section>
                 <h2 class="header">Why Hippow?</h2>
             </section>
-
             <!-- <section>
                 An important aspect of any good blockchain is that it is decentralized. That means that no central authority controls it. The advantage of decentralization is that you don't have to trust anybody. But, how can the blockchain remain secure if nobody is in charge of it?
             </section> -->
-
             <section>
                 Proof-of-work blockchains, like Bitcoin, have many mathematical solutions in place to ensure they are kept secure. Perhaps the most important of these security features is the nonce: a number only used once. Thousands and thousands of computers across the world are currently competing to find the nonce for the lastest block in the blockchain. This is called mining. Here is how many guesses it currently takes, on average, to find this nonce on the Bitcoin blockchain:
             </section>
@@ -148,21 +160,6 @@
             <section>
                 For the full technical explanation, please visit the official Hippow Youtube channel: (coming soon)
             </section>
-
-            <!-- <section>
-                <div>Bitcoin estimated power consumption:</div>
-                <div class="energy-usage">80 TW/hr</div>
-            </section>
-            <section>
-                <div>Spots.cc estimated power consumption:</div>
-                <div class="energy-usage">0.00000000000000000000025 TW/hr</div>
-            </section> -->
-            <!-- <section>
-                <div>Besides being energy efficient, this unique blockchain offers several other benefits. For one, it is the only cryptocurrency you can "mine" directly from your browser. Other blockchains require you to download complicated mining software and many only work when run on a GPU. By comparison, Spots.cc makes it incredibly easy to get started earning crypto.</div>
-            </section>
-            <section>
-                <div>Another added benefit is that the usability of Spots.cc makes it a great educational tool. Never before has it been so easy to explore a blockchain and understand the process of mining cryptocurrencies with hands-on experience. My hope is that this project demystifies cryptocurrencies for new investors with its simple and transparent process.</div>
-            </section> -->
         </div>
 
         <div id="send-container">
@@ -218,12 +215,7 @@
                 <p>This is the genesis block.</p>
             </div>
             <div id="image-container"></div>
-            <div id="transaction-info-container">
-                <!-- <div>Transaction Hash: <span id="transaction-hash"></span></div>
-                <div>From: <span id="transaction-from"></span></div>
-                <div>To: <span id="transaction-to"></span></div>
-                <div>Amount: <span id="transaction-amount"></span> Spots</div> -->
-            </div>
+            <div id="transaction-info-container"></div>
         </div>
 
     </div>
