@@ -1,8 +1,6 @@
 Phase 1.0
 
-Get DB to work on Heroku
 SSL
-Homepage
 Mobile version
 Browser tab image
 Pay for Heroku
@@ -24,6 +22,7 @@ Promote on social media
 
 Phase 2
 
+Some of the dependencies are unnecessary
 Change single quotes to double
 Blockchain refresh button
 Actually use blocks properly

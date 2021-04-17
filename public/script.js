@@ -56,7 +56,7 @@ $("#wallet-secret").val(wallet.privateKey)
 // load list of trusted servers from local storage
 let serverList = JSON.parse(localStorage.getItem("serverList"))
 if (!serverList) {
-    serverList = ["https://spots-cc.herokuapp.com"];
+    serverList = ["https://www.hippow.cc"];
 }
 $("#server-list").val(serverList.join("\n"))
 
@@ -73,7 +73,7 @@ function displayBlock(block, index) {
             ${index > 0 ? `<div class="from">From: &nbsp;${block.from.substring(0, 9)}...</div>` : ''}
             
             <div class="to">To: &nbsp;&nbsp;&nbsp;${block.to.substring(0, 9)}...</div>
-            <div class="amount">Spots: ${block.amount}</div>
+            <div class="amount">Amount: ${block.amount}</div>
         </div>
     `;
 }

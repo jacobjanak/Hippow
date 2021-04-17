@@ -172,7 +172,6 @@ img#hippow {
     position: absolute;
     top: 24px;
     left: 512px;
-    z-index: -1;
 }
 
 img#hippow2 {
