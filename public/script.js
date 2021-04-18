@@ -417,26 +417,32 @@ $("#show").on("click", function(e) {
     $("#cover-up").hide()
 })
 
+function openMenu() {
+    $("#menu-button").css({ backgroundColor: "#665B69" })
+    $("#menu-container").addClass("open")
+    $("#closed-text").hide()
+    $("#open-text").show()
+}
+
+function closeMenu() {
+    $("#menu-button").css({ backgroundColor: "#4E4351" })
+    $("#menu-container").removeClass("open")
+    $("#open-text").hide()
+    $("#closed-text").show()
+}
+
 $("#menu-button").on("click", function(e) {
     if ($("#menu-container").hasClass("open")) {
-        $("#menu-container").removeClass("open")
-        $("#open-text").hide()
-        $("#closed-text").show()
+        closeMenu()
     } else {        
-        $("#menu-container").addClass("open")
-        $("#closed-text").hide()
-        $("#open-text").show()
+        openMenu()
 
         // I had to setTimeout to get this to work with fa icon
         // this allows user to click away from menu to close it
         window.setTimeout(() => {
             $("html").on("click", function(e) {
                 $("html").prop("onclick", null).off("click");
-                if (!$(e.target).is("#menu-button")) {
-                    $("#menu-container").removeClass("open")
-                    $("#menu-button").text(" Menu")
-                    $("#menu-button").prepend(`<i class="fas fa-bars"></i>`)
-                }
+                closeMenu()
             });
         }, 1)
     }

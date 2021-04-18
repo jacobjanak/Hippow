@@ -33,18 +33,34 @@
         </div>
     </div>
 
-    <div id="menu-container" class="no-select">
-        <div id="menu-button">
-            <span id="closed-text"><i class="fas fa-bars"></i> Menu</span>
-            <span id="open-text"><i class="fas fa-times"></i> Close</span>
-        </div>
+    <nav id="nav-container" class="no-select clearfix">
+
+        <!-- left side of nav -->
+        <ul id="left-nav">
+            <li class="nav-link" data-page="home">
+                <i class="fas fa-home"></i> Home
+            </li>
+            <li class="nav-link" data-page="send">
+                <i class="fas fa-paper-plane"></i> Send
+            </li>
+            <li class="nav-link" data-page="settings">
+                <i class="fas fa-cog"></i> Config
+            </li>
+        </ul>
+
+        <!-- right side of nav -->
+        <div id="menu-container" class="no-select">
+            <div id="menu-button">
+                <span id="closed-text"><i class="fas fa-bars"></i> Menu</span>
+                <span id="open-text"><i class="fas fa-times"></i> Close</span>
+            </div>
             
             <div id="menu-popup">
                 <ul>
-                    <li class="essential" data-page="home">
+                    <li data-page="home">
                         <i class="fas fa-home"></i> Home
                     </li>
-                    <li class="essential" data-page="send">
+                    <li data-page="send">
                         <i class="fas fa-paper-plane"></i> Send
                     </li>
                     <li data-page="wallet">
@@ -58,26 +74,10 @@
                     </li>
                 </ul>
             </div>
-    </div>
+        </div>
+    </nav>
 
     <div id="content-container">
-
-        <nav id="nav-container" class="no-select">
-            <ul>
-                <li class="nav-link" data-page="home">
-                    <i class="fas fa-home"></i> Home
-                </li>
-                <li class="nav-link" data-page="send">
-                    <i class="fas fa-paper-plane"></i> Send
-                </li>
-                <li class="nav-link nonessential" data-page="">
-                    <i class="fas fa-cubes"></i> Blockchain
-                </li>
-                <li class="nav-link nonessential" data-page="settings">
-                    <i class="fas fa-cog"></i> Config
-                </li>
-            </ul>
-        </nav>
 
         <div id="home-container">
             <section id="homepage-banner">
@@ -90,7 +90,7 @@
             </section>
             <img id="hippow1" src="images/hippow1.png" /> 
             <section>
-                Proof-of-work is currently the most popular method of securing blockchains. But, most proof-of-work blockchains have one major flaw: they're not scalable. They're slow, they're inefficient, and they require a ton of energy.
+                Proof-of-work is currently the most popular method of securing blockchains. But, most proof-of-work blockchains have one major problem: they're not scalable. They're slow, they're inefficient, and they require a ton of energy.
             </section>
             <section>
                 That's why Hippow was created. Hippow utilizes the abilities of humans, rather than computers, to do "work".

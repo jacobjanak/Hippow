@@ -4,6 +4,7 @@
 
 body {
     background-color: #FBEAFF;
+    min-width: 240px;
 }
 
 #content-container {
@@ -15,103 +16,6 @@ body {
     margin-right: 24px;
     padding-bottom: 128px;
 }
-
-@media only screen and (min-width: 1280px) {
-    #content-container {
-        position: relative;
-        top: 0;
-        left: 0;
-        margin: 96px auto 0;
-    }
-}
-
-@media only screen and (min-width: 1024px) {
-    html {
-        overflow-x: hidden;
-    }
-    body {
-        width: 100vw; /* prevent scroll bar from moving content */
-    }
-    #menu-container {
-        display: none;
-    }
-}
-
-@media only screen and (max-width: 1023px) {
-    #content-container {
-        position: relative;
-        top: 0;
-        left: 0;
-        margin: 96px auto 0;
-    }
-    #transactions-container {
-        display: none !important;
-    }
-    #nav-container {
-        font-size: large;
-    }
-    .nav-link.nonessential {
-        display: none;
-    }
-    #menu-popup li.essential {
-        display: none;
-    }
-    #balance-container {
-        display: none;
-    }
-    #menu-container {
-        right: 32px;
-        right: calc((100% - 744px) / 2);
-    }
-}
-
-@media only screen and (max-width: 900px) {
-    #content-container {
-        width: 90%;
-        margin-left: 5%;
-        margin-right: 5%;
-    }
-    #nav-container {        
-        top: 24px !important;
-    }
-    #menu-container {
-        top: 24px !important;
-        right: 5%;
-    }
-    #menu-popup li.essential {
-        display: block;
-    }
-}
-
-@media only screen and (max-width: 600px) {
-    #nav-container {
-        display: none;
-    }
-    #menu-container {
-        font-size: x-large !important;
-    }
-}
-
-/* NAVBAR */
-nav {
-    position: fixed;
-    top: 16px;
-    z-index: 100;
-}
-.nav-link {
-    cursor: pointer;
-    margin-right: 16px;
-    padding: 8px 16px;
-    display: inline-block;
-    background-color: #4E4351;
-    color: white;
-    border-radius: 16px;
-    border: 1px #B4A7B7 solid;
-}
-nav > ul > li:hover {
-    background-color: #665B69;
-}
-/* END NAVBAR */
 
 /* BLOCKCHAIN DISPLAY */
 #transactions-container {
@@ -156,6 +60,34 @@ nav > ul > li:hover {
 }
 /* END BLOCKCHAIN DISPLAY */
 
+/* NAVBAR */
+nav {
+    position: fixed;
+    max-width: 744px;
+    width: 100%;
+    top: 16px;
+    left: 256px;
+    right: 24px;
+    z-index: 100;
+}
+#left-nav {
+    float: left;
+}
+.nav-link {
+    cursor: pointer;
+    margin-right: 16px;
+    padding: 8px 16px;
+    display: inline-block;
+    background-color: #4E4351;
+    color: white;
+    border-radius: 16px;
+    border: 1px #B4A7B7 solid;
+}
+nav > ul > li:hover {
+    background-color: #665B69;
+}
+/* END NAVBAR */
+
 /* WALLET DISPLAY */
 #balance-container {
     position: fixed;
@@ -198,8 +130,7 @@ nav > ul > li:hover {
 
 /* POP UP MENU */
 #menu-container {
-    position: fixed;
-    top: 16px;
+    float: right;
     font-size: larger;
     text-align: center;
     color: white;
@@ -255,10 +186,81 @@ nav > ul > li:hover {
 #menu-popup li:hover {
     background-color: #665B69;
 }
-/* END POP UP MENU*/
+/* END POP UP MENU */
+
+/* large monitors+ */
+@media only screen and (min-width: 1280px) {
+    #content-container {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin: 96px auto 0;
+    }
+    nav {
+        width: 744px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+    }
+}
+
+/* laptops+ */
+@media only screen and (min-width: 1024px) {
+    html {
+        overflow-x: hidden;
+    }
+    body {
+        width: 100vw; /* prevent scroll bar from moving content */
+    }
+    #menu-container {
+        display: none;
+    }
+
+}
+
+/* tablets- */
+@media only screen and (max-width: 1023px) {
+    #content-container {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin: 96px auto 0;
+    }
+    nav {
+        right: auto !important;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: large;
+    }
+    #left-nav {
+        display: none;
+    }
+    #transactions-container {
+        display: none !important;
+    }
+    #balance-container {
+        display: none;
+    }
+}
+
+/* landscape phones- */
+@media only screen and (max-width: 900px) {
+    #content-container {
+        width: 90%;
+    }
+    nav {
+        width: 90%;
+    }
+}
+
+/* phones- */
+@media only screen and (max-width: 600px) {
+    #menu-container {
+        font-size: x-large !important;
+    }
+}
 
 /* HOME PAGE */
-#home-container {}
 #homepage-banner {
     font-size: x-large;
     margin-top: 0;
@@ -303,7 +305,7 @@ img#hippow2 {
 #equation-subtext {
     text-align: center;
 }
-@media only screen and (min-width: 601px) and (max-width: 768px) {
+@media only screen and (min-width: 601px) and (max-width: 800px) {
     img#hippow1 {
         top: 48px;
         width: 50vw;
@@ -311,18 +313,26 @@ img#hippow2 {
 }
 @media only screen and (max-width: 600px) {
     #homepage-banner {
-        margin-top: -72px;
+        width: 120px;
+        overflow: visible;
+        margin-left: auto;
+        margin-right: auto;
     }
     img#hippow1 {
-        /*display: block;*/
-        position: relative;
+        position: static;
         top: 0;
         left: 0;
         right: auto;
         width: 80%;
         margin-left: 10%;
         margin-right: 10%;
+        margin-top: 64px;
+        margin-bottom: 32px;
+    }
+    img#hippow2 {
+        width: 80%;
         margin-top: 32px;
+        margin-bottom: 32px;
     }
 }
 /*@media only screen and (min-width: 768px) and (max-width: 1023px) {
@@ -466,14 +476,17 @@ button:hover {
 }
 /* END TRANSACTION DISPLAY CONTAINER */
 
+.clearfix {
+    overflow: auto;
+}
+
 .no-select {
-    -webkit-touch-callout: none; /* iOS Safari */
-      -webkit-user-select: none; /* Safari */
-       -khtml-user-select: none; /* Konqueror HTML */
-         -moz-user-select: none; /* Old versions of Firefox */
-          -ms-user-select: none; /* Internet Explorer/Edge */
-              user-select: none; /* Non-prefixed version, currently
-                                    supported by Chrome, Edge, Opera and Firefox */
+    -webkit-touch-callout: none;
+      -webkit-user-select: none;
+       -khtml-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
 }
 
 .fa-check-circle {
