@@ -13,21 +13,21 @@
 
 <body>
 
-    <div id="transactions-container">
+    <div id="sidebar" class="transactions-container">
         <div id="transactions-header">Blockchain</div>
     </div>
 
     <div id="balance-container">
         <div><i class="fas fa-coins"></i> Wallet</div>
-        <div><span id="wallet-balance">0</span></div>
+        <div><span class="wallet-balance">0</span></div>
         <div id="wallet-info">
             <p>Public Address</p>
-            <div id="wallet-address"></div>
+            <div class="wallet-address"></div>
             <p>Private Key</p>
             <div style="position: relative;">
-                <input id="wallet-secret" />
-                <div id="cover-up">
-                    <span id="show"><i class="fas fa-eye fa-sm"></i> Click to show</span>
+                <input class="wallet-secret" />
+                <div class="cover-up">
+                    <span class="show"><i class="fas fa-eye fa-sm"></i> Click to show</span>
                 </div>
             </div>
         </div>
@@ -90,14 +90,17 @@
             </section>
             <img id="hippow1" src="images/hippow1.png" /> 
             <section>
-                Proof-of-work is currently the most popular method of securing blockchains. But, most proof-of-work blockchains have one major problem: they're not scalable. They're slow, they're inefficient, and they require a ton of energy.
+                Hippow is the most efficient proof-of-work blockchain.
             </section>
             <section>
-                That's why Hippow was created. Hippow utilizes the abilities of humans, rather than computers, to do "work".
+                Currently, the most popular method of securing blockchains is proof-of-work. But, most proof-of-work blockchains have one major problem: they're not scalable. They're slow, they're wasteful, and they require a ton of energy.
             </section>
             <section>
+                That's why Hippow was created. Hippow is lightweight because it utilizes the abilities of humans, rather than computers, to do "work".
+            </section>
+<!--             <section>
                 The Hippow blockchain is fast, lightweight, and efficient. Hippow doesn't need to waste any energy to keep the blockchain secure. Before we get into all that, let's first discuss how you can get started earning Hippow coins. 
-            </section>
+            </section> -->
             <section>
                 <h2 class="header">Getting Started</h2>
             </section>
@@ -185,6 +188,33 @@
                 <button id="send-button">Send</button>
                 <div id="send-error"></div>
             </form>
+        </div>
+
+        <div id="wallet-container">
+            <!-- <h2 class="header">Wallet</h2> -->
+            <section>
+                <h2 class="header">Balance</h2>
+                <div><span class="wallet-balance">0</span> coins</div>
+            </section>
+            <section>
+                <h2 class="header">Public Address</h2>
+                <div class="wallet-address"></div>
+            </section>
+            <section>
+                <h2 class="header">Private Key</h2>
+                <div style="position: relative;">
+                    <input class="wallet-secret" />
+                    <div class="cover-up">
+                        <span class="show"><i class="fas fa-eye fa-sm"></i> Click to show</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="blockchain-container">
+            <div id="blockchain" class="transactions-container">
+                <div id="transactions-header">Blockchain</div>
+            </div>
         </div>
 
         <div id="settings-container">
