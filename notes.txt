@@ -3,6 +3,7 @@ Phase 1.0
 Change balance to wallet
 Mobile version
 > transaction details just overflows
+> fix instructions for mobile users
 App is in development mode warning
 
 Phase 1.1

@@ -18,7 +18,7 @@
     </div>
 
     <div id="balance-container">
-        <div><i class="fas fa-coins"></i> Balance</div>
+        <div><i class="fas fa-coins"></i> Wallet</div>
         <div><span id="wallet-balance">0</span></div>
         <div id="wallet-info">
             <p>Public Address</p>
@@ -33,25 +33,36 @@
         </div>
     </div>
 
-    <div id="menu-container">
+    <div id="menu-container" class="no-select">
         <div id="menu-button">
-            <div><i class="fas fa-bars"></i> Menu</div>
+            <span id="closed-text"><i class="fas fa-bars"></i> Menu</span>
+            <span id="open-text"><i class="fas fa-times"></i> Close</span>
         </div>
             
             <div id="menu-popup">
                 <ul>
-                    <li class="">Home</li>
-                    <li class="">Wallet</li>
-                    <li class="">Send</li>
-                    <li class="nonessential">Blockchain</li>
-                    <li class="nonessential">Config</li>
+                    <li class="essential" data-page="home">
+                        <i class="fas fa-home"></i> Home
+                    </li>
+                    <li class="essential" data-page="send">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </li>
+                    <li data-page="wallet">
+                        <i class="fas fa-coins"></i> Wallet
+                    </li>
+                    <li data-page="blockchain">
+                        <i class="fas fa-cubes"></i> Blockchain
+                    </li>
+                    <li data-page="settings">
+                        <i class="fas fa-cog"></i> Config
+                    </li>
                 </ul>
             </div>
     </div>
 
     <div id="content-container">
 
-        <nav id="nav-container">
+        <nav id="nav-container" class="no-select">
             <ul>
                 <li class="nav-link" data-page="home">
                     <i class="fas fa-home"></i> Home
@@ -60,7 +71,7 @@
                     <i class="fas fa-paper-plane"></i> Send
                 </li>
                 <li class="nav-link nonessential" data-page="">
-                    <i class="fas"></i> Blockchain
+                    <i class="fas fa-cubes"></i> Blockchain
                 </li>
                 <li class="nav-link nonessential" data-page="settings">
                     <i class="fas fa-cog"></i> Config

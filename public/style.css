@@ -53,6 +53,9 @@ body {
     .nav-link.nonessential {
         display: none;
     }
+    #menu-popup li.essential {
+        display: none;
+    }
     #balance-container {
         display: none;
     }
@@ -75,13 +78,16 @@ body {
         top: 24px !important;
         right: 5%;
     }
+    #menu-popup li.essential {
+        display: block;
+    }
 }
 
 @media only screen and (max-width: 600px) {
     #nav-container {
         display: none;
     }
-    #menu-button {
+    #menu-container {
         font-size: x-large !important;
     }
 }
@@ -194,25 +200,60 @@ nav > ul > li:hover {
 #menu-container {
     position: fixed;
     top: 16px;
+    font-size: larger;
+    text-align: center;
+    color: white;
     z-index: 1000;
+}
+#menu-container.open {
+    width: 256px;
+    background-color: #4E4351;
+    border-radius: 16px;
+    border: 1px #B4A7B7 solid;
 }
 #menu-button {
     cursor: pointer;
     position: relative;
-    /*right: 0;*/
+    transform: translate(-1px, -1px);
     padding: 8px 16px;
-    font-size: larger;
-    /*text-align: right;*/
     background-color: #4E4351;
-    color: white;
     border-radius: 16px;
     border: 1px #B4A7B7 solid;
+}
+#menu-button > i {
+    pointer-events: none;
+}
+.open #menu-button {
+    width: 256px;
+    padding: 16px 0;
+    /*padding-left: 0;*/
+    /*padding-right: 0;*/
+    border-radius: 16px 16px 0 0;
+    /*border: none;*/
 }
 #menu-button:hover {
     background-color: #665B69;
 }
+#open-text {
+    display: none;
+}
+#menu-popup {
+    display: none;
+}
+.open #menu-popup {
+    display: block;
+}
 #menu-popup li {
-    height: 200px;
+    cursor: pointer;
+    padding: 16px 0;
+    border-bottom: 1px #B4A7B7 solid;
+}
+#menu-popup li:last-of-type {
+    border-bottom: none;
+    border-radius: 0 0 16px 16px;
+}
+#menu-popup li:hover {
+    background-color: #665B69;
 }
 /* END POP UP MENU*/
 
@@ -269,6 +310,9 @@ img#hippow2 {
     }
 }
 @media only screen and (max-width: 600px) {
+    #homepage-banner {
+        margin-top: -72px;
+    }
     img#hippow1 {
         /*display: block;*/
         position: relative;
@@ -421,6 +465,16 @@ button:hover {
     max-width: 100%;
 }
 /* END TRANSACTION DISPLAY CONTAINER */
+
+.no-select {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+}
 
 .fa-check-circle {
     color: #00C9B9;

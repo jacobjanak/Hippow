@@ -169,7 +169,7 @@ function processBlockchain(blockchain) {
     attachTransactionClickHandler()
 }
 
-$(".nav-link").on("click", function(e) {
+$("li").on("click", function(e) {
     $(".transaction").removeClass("active")
     $("#genesis-container").hide()
     $("#transaction-container").hide()
@@ -404,17 +404,44 @@ function attachTransactionClickHandler() {
 }
 
 $("#balance-container").on("mouseenter", function(e) {
-    // $(this).append(`<p>Address</p><p>${wallet.address}</p>`)
     $("#wallet-info").show()
     $("#cover-up").show()
 })
 
 $("#balance-container").on("mouseleave", function(e) {
-    // $(this).append(`<p>Address</p><p>${wallet.address}</p>`)
     $("#wallet-info").hide()
     $("#cover-up").show()
 })
 
 $("#show").on("click", function(e) {
     $("#cover-up").hide()
+})
+
+$("#menu-button").on("click", function(e) {
+    if ($("#menu-container").hasClass("open")) {
+        $("#menu-container").removeClass("open")
+        $("#open-text").hide()
+        $("#closed-text").show()
+    } else {        
+        $("#menu-container").addClass("open")
+        $("#closed-text").hide()
+        $("#open-text").show()
+
+        // I had to setTimeout to get this to work with fa icon
+        // this allows user to click away from menu to close it
+        window.setTimeout(() => {
+            $("html").on("click", function(e) {
+                $("html").prop("onclick", null).off("click");
+                if (!$(e.target).is("#menu-button")) {
+                    $("#menu-container").removeClass("open")
+                    $("#menu-button").text(" Menu")
+                    $("#menu-button").prepend(`<i class="fas fa-bars"></i>`)
+                }
+            });
+        }, 1)
+    }
+})
+
+$("li").on("click", function(e) {
+    console.log("hi")
 })
