@@ -254,6 +254,12 @@ nav > ul > li:hover {
     nav {
         width: 90%;
     }
+    #wallet-container {
+        overflow-x: scroll;
+    }
+    #transaction-container {
+        overflow-x: scroll;
+    }
 }
 
 /* phones- */
@@ -423,6 +429,7 @@ button:hover {
 #server-list {
     margin-bottom: 8px;
     max-width: 100%;
+    max-width: calc(100% - 8px);
     width: 512px;
 }
 #server-list-info {
@@ -440,6 +447,7 @@ button:hover {
 #private-key {
     margin-bottom: 8px;
     max-width: 100%;
+    max-width: calc(100% - 8px);
 }
 #import-error {
     display: none;
@@ -452,7 +460,6 @@ button:hover {
 #wallet-container {
     display: none;
     padding-bottom: 16px;
-    overflow-x: scroll;
 }
 #wallet-container section:first-of-type {
     margin-top: 0;
@@ -485,7 +492,6 @@ button:hover {
 
 /* TRANSACTION DISPLAY CONTAINER */
 #transaction-container {
-    overflow-x: scroll;
     padding-bottom: 16px;
     display: none;
 }
@@ -519,6 +525,23 @@ button:hover {
 }
 #image-container > img {
     max-width: 100%;
+}
+@media only screen and (max-width: 600px) {
+    #menu-container {
+        font-size: x-large;
+    }
+    #secret {
+        max-width: 90%;
+        width: 90%;
+        max-width: calc(100% - 8px);
+        width: calc(100% - 8px);
+        margin-bottom: 16px;
+    }
+    button {
+        width: 100%;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
 }
 /* END TRANSACTION DISPLAY CONTAINER */
 

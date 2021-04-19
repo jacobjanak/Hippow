@@ -146,7 +146,6 @@ $(document).ready(function() {
     */
 
     function processBlockchain(blockchain) {
-        console.log(blockchain)
         $(".transactions-container").html(`<div id="transactions-header">Blockchain</div>`)
         for (let i = blockchain.length - 1; i >= 0; i--) {
             const block = blockchain[i];
@@ -207,16 +206,11 @@ $(document).ready(function() {
     })
 
     // jQuery mobile form submit is broking
-    // $("#send-form").on("submit", e => {
-    const form = document.getElementById("send-form");
-    if (form.attachEvent) {
-        form.attachEvent("submit", processForm);
-    } else {
-        form.addEventListener("submit", processForm);
-    }
-    
-    function processForm(e) {
+    $("#send-form").on("submit", e => {
         e.preventDefault()
+
+        console.log("hi")
+
         $("#send-error").hide()
         const to = $("#to").val().trim();
         const amount = parseInt($("#amount").val());
@@ -260,7 +254,7 @@ $(document).ready(function() {
                 }
             })
         }
-    }
+    })
 
     $("#secret-form").on("submit", e => {
         e.preventDefault()
