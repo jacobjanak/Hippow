@@ -244,6 +244,12 @@ nav > ul > li:hover {
     #balance-container {
         display: none;
     }
+    .mobile-text {
+        display: block !important;
+    }
+    .non-mobile-text {
+        display: none;
+    }
 }
 
 /* landscape phones- */
@@ -313,6 +319,9 @@ img#hippow2 {
 }
 #equation-subtext {
     text-align: center;
+}
+.mobile-text {
+    display: none;
 }
 @media only screen and (min-width: 601px) and (max-width: 800px) {
     img#hippow1 {
