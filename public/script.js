@@ -206,7 +206,16 @@ $(document).ready(function() {
         }
     })
 
-    $("#send-form").on("submit", e => {
+    // jQuery mobile form submit is broking
+    // $("#send-form").on("submit", e => {
+    const form = document.getElementById("send-form");
+    if (form.attachEvent) {
+        form.attachEvent("submit", processForm);
+    } else {
+        form.addEventListener("submit", processForm);
+    }
+    
+    function processForm(e) {
         e.preventDefault()
         $("#send-error").hide()
         const to = $("#to").val().trim();
@@ -251,7 +260,7 @@ $(document).ready(function() {
                 }
             })
         }
-    })
+    }
 
     $("#secret-form").on("submit", e => {
         e.preventDefault()
