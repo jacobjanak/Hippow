@@ -541,6 +541,7 @@ button:hover {
         width: 100%;
         padding-top: 8px;
         padding-bottom: 8px;
+        font-size: medium;
     }
 }
 /* END TRANSACTION DISPLAY CONTAINER */
