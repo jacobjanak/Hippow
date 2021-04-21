@@ -46,10 +46,12 @@ if (process.env.NODE_ENV === "production") {
 }
 const db = admin.firestore();
 
-// load blockchain
+// load blockchain and images
 let blockchain = [];
 const balances = {};
-db.collection('hippow').doc('blockchain').get()
+let images = [];
+let nextImageIndex = 0;
+db.collection("hippow").doc("blockchain").get()
 .then(doc => {
     if (!doc.exists) console.error("No such document");
     blockchain = doc.data().blockchain;
@@ -71,25 +73,32 @@ db.collection('hippow').doc('blockchain').get()
             }
         }
     }
-})
-.catch(err => { console.error(err) })
 
-// get images
-let images;
-let nextImageIndex = 0
-https.get(imageURL + "/images", res => { 
-    let data = ''; 
-    res.on('data', chunk => data += chunk.toString())
-    res.on('end', () => {
-        images = JSON.parse(data);
-        nextImageIndex = images.length;
-        images = images.sort((a, b) => {
-            if (a.hash > b.hash) return 1;
-            if (a.hash < b.hash) return -1;
-            return 0;
+    // get images
+    https.get(imageURL + "/images", res => { 
+        let data = ''; 
+        res.on('data', chunk => data += chunk.toString())
+        res.on('end', () => {
+            images = JSON.parse(data);
+            nextImageIndex = images.length;
+
+            // remove images that have already been used
+            for (let i = 0; i < blockchain.length; i++) {
+                const block = blockchain[i];
+                images[block.image.index] = null;
+            }
+            images = images.filter(x => x !== null);
+
+            // sort what's left of the images
+            images = images.sort((a, b) => {
+                if (a.hash > b.hash) return 1;
+                if (a.hash < b.hash) return -1;
+                return 0;
+            })
         })
     })
 })
+.catch(err => { console.error(err) })
 
 // insert into image array so that it's sorted by the hash
 function insertImage(images, image) {
@@ -112,6 +121,7 @@ function formatKey(key) {
     return "-----BEGIN PUBLIC KEY-----\n" + key.replace(/(.{64})/g,"$1\n") + "\n-----END PUBLIC KEY-----";
 }
 
+// routing
 app.get("/blockchain", (req, res) => {
     res.json(blockchain)
 })

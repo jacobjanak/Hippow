@@ -1,10 +1,7 @@
 Phase 1.0
 
+Fix iSpy
 Upload thousands of images
-Mobile version
-> transaction details just overflows
-> menu button disappears when page overflows
-> fix instructions for mobile users
 
 Phase 1.1
 

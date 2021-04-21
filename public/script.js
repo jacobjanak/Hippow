@@ -72,9 +72,9 @@ $(document).ready(function() {
                         : '<span class="adjust-left">Pending</span> <i class="fas fa-exclamation-circle"></i>'}
                 </div>
                 <div class="hash">${block.hash.substring(0, 16)}...</div>
-                ${index > 0 ? `<div class="from">From: &nbsp;${block.from.substring(0, 9)}...</div>` : ''}
+                ${index > 0 ? `<div class="from">From: &nbsp;&nbsp;${block.from.substring(0, 9)}...</div>` : ''}
                 
-                <div class="to">To: &nbsp;&nbsp;&nbsp;${block.to.substring(0, 9)}...</div>
+                <div class="to">To: &nbsp;&nbsp;&nbsp;&nbsp;${block.to.substring(0, 9)}...</div>
                 <div class="amount">Amount: ${block.amount}</div>
             </div>
         `;
@@ -165,7 +165,7 @@ $(document).ready(function() {
 
         // $("#wallet-address").text(wallet.address.substring(0, 12) + "..")
         $(".wallet-balance").text(wallet.balance)
-        $("#amount").attr("max", wallet.balance)
+        // $("#amount").attr("max", wallet.balance)
         $(".transactions-container").show()
         attachTransactionClickHandler()
     }
@@ -209,50 +209,54 @@ $(document).ready(function() {
     $("#send-form").on("submit", e => {
         e.preventDefault()
 
-        console.log("hi")
-
         $("#send-error").hide()
         const to = $("#to").val().trim();
-        const amount = parseInt($("#amount").val());
+        let amount = parseInt($("#amount").val());
+        amount = amount === wallet.balance ? amount - 1 : amount;
 
-        // create transaction object
-        const transaction = {
-            from: wallet.publicKey,
-            to: to,
-            amount: amount - 1, // must pay 1 for fee
-        }
+        if (amount <= wallet.balance) {
 
-        // generate signature
-        // TO DO: add transaction data
-        const signature = generateSignature(
-            unformatPublicKey(wallet.publicKey),
-            unformatPrivateKey(wallet.privateKey),
-            transaction
-        )
-
-        // send data to server
-        for (let i = 0; i < serverList.length; i++) {
-            $.post(serverList[i] + "/transaction", {
-                signature: signature,
+            // create transaction object
+            const transaction = {
                 from: wallet.publicKey,
                 to: to,
-                amount: amount - 1, // must pay 1 for fee
-            })
-            .done(data => { window.location.reload() })
-            .fail(function(err) {
-                if (err.status != 200) {
-                    if (err.status === 500) {
-                        $("#send-error").text("There are no images left to assign to your transaction. This is not your fault. Please wait a while and then try again.")
+                amount: amount,
+            }
+
+            // generate signature
+            const signature = generateSignature(
+                unformatPublicKey(wallet.publicKey),
+                unformatPrivateKey(wallet.privateKey),
+                transaction
+            )
+
+            // send data to server
+            for (let i = 0; i < serverList.length; i++) {
+                $.post(serverList[i] + "/transaction", {
+                    signature: signature,
+                    from: wallet.publicKey,
+                    to: to,
+                    amount: amount,
+                })
+                .done(data => { window.location.reload() })
+                .fail(function(err) {
+                    if (err.status != 200) {
+                        if (err.status === 500) {
+                            $("#send-error").text("There are no images left to assign to your transaction. This is not your fault. Please wait a while and then try again.")
+                        }
+                        else if (err.status === 400) {
+                            $("#send-error").text("The server could not approve your transaction.")
+                        } else {
+                            $("#send-error").text("There was an error processing your transaction.")
+                        }
+                        $("#send-error").show()
                     }
-                    else if (err.status === 400) {
-                        $("#send-error").text("The server could not approve your transaction.")
-                    } else {
-                        $("#send-error").text("There was an error processing your transaction.")
-                    }
-                    $("#send-error").show()
-                    $("#amount").val("")
-                }
-            })
+                })
+            }
+
+        } else {
+            $("#send-error").text("You don't have enough Hippow coins in your wallet.")
+            $("#send-error").show()
         }
     })
 
@@ -276,7 +280,7 @@ $(document).ready(function() {
                 wallet.balance += currentBlock.amount;
             }
             $(".wallet-balance").text(wallet.balance)
-            $("#amount").attr("max", wallet.balance)
+            // $("#amount").attr("max", wallet.balance)
 
 
             // update display of block in blockchain
