@@ -428,6 +428,15 @@ button:hover {
 }
 /* END SEND PAGE */
 
+/* INFO PAGE */
+#info-container {
+    display: none;
+}
+iframe {
+    max-width: 100%;
+}
+/* END INFO PAGE */
+
 /* SETTINGS PAGE */
 #settings-container {
     display: none;

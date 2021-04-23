@@ -71,7 +71,7 @@ $(document).ready(function() {
                         ? '<span class="adjust-left">Confirmed</span> <i class="fas fa-check-circle"></i>'
                         : '<span class="adjust-left">Pending</span> <i class="fas fa-exclamation-circle"></i>'}
                 </div>
-                <div class="hash">${block.hash.substring(0, 16)}...</div>
+                <div class="hash">${block.hash.substring(0, 17)}...</div>
                 ${index > 0 ? `<div class="from">From: &nbsp;&nbsp;${block.from.substring(0, 9)}...</div>` : ''}
                 
                 <div class="to">To: &nbsp;&nbsp;&nbsp;&nbsp;${block.to.substring(0, 9)}...</div>
@@ -183,6 +183,7 @@ $(document).ready(function() {
         // hide all pages
         $("#home-container").hide()
         $("#send-container").hide()
+        $("#info-container").hide()
         $("#settings-container").hide()
         $("#blockchain-container").hide()
         $("#wallet-container").hide()
@@ -193,6 +194,9 @@ $(document).ready(function() {
         }
         else if (page === "send") {
             $("#send-container").css({ display: "flex" })
+        }
+        else if (page === "info") {
+            $("#info-container").show()
         }
         else if (page === "settings") {
             $("#settings-container").show()
