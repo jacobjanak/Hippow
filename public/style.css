@@ -266,6 +266,11 @@ nav > ul > li:hover {
     #transaction-container {
         overflow-x: scroll;
     }
+    #info-container {
+        overflow-y: hidden; /* not sure why but nowrap causes small overflow */
+        overflow-x: scroll;
+        padding-bottom: 24px;
+    }
 }
 
 /* phones- */
@@ -434,6 +439,9 @@ button:hover {
 }
 iframe {
     max-width: 100%;
+}
+#info-container > .link-container {
+    white-space: nowrap;
 }
 /* END INFO PAGE */
 
