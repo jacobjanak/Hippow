@@ -63,7 +63,6 @@ $(document).ready(function() {
     $("#server-list").val(serverList.join("\n"))
 
     function displayBlock(block, index) {
-        console.log(block)
         return `
             <div class="transaction" data-index=${index}>
                 <div class="status ${block.image.secret ? "confirmed" : "pending"}">
@@ -398,6 +397,7 @@ $(document).ready(function() {
             $("#send-container").hide()
             $("#wallet-container").hide()
             $("#blockchain-container").hide()
+            $("#info-container").hide()
             $("#settings-container").hide()
 
             if (currentBlockIndex === 0) {
