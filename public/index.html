@@ -104,6 +104,9 @@
             <section>
                 That's why Hippow was created. Hippow is lightweight because it utilizes the abilities of humans, rather than computers, to do "work".
             </section>
+            <section style="color:red;">
+                PLEASE NOTE: THIS PROJECT IS STILL UNDER DEVELOPMENT.
+            </section>
 <!--             <section>
                 The Hippow blockchain is fast, lightweight, and efficient. Hippow doesn't need to waste any energy to keep the blockchain secure. Before we get into all that, let's first discuss how you can get started earning Hippow coins. 
             </section> -->
@@ -231,6 +234,9 @@
 
         <div id="info-container">
             <section>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/qcRfh7gIp3s" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </section>
+            <section>
                 <h2 class="header">Getting Started</h2>
             </section>
             <section>
@@ -254,9 +260,60 @@
             <section class="link-container">
                 GitHub: <a href="https://github.com/jacobjanak/Hippow" target="_blank">github.com/jacobjanak/Hippow</a>
             </section>
-<!--             <section>
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </section> -->
+            <section>
+                <h2 class="header">Roadmap</h2>
+            </section>
+            <section>
+                I. The most important step to finishing Hippow is to start getting images from the proper source. Currently, since the project is still being worked on, all images are being uploaded by hand. There are three possible sources that Hippow will get its images from once it's finished:
+            </section>
+            <section>
+                1. A decentralized web scraper. This piece of publicly available code will scrape the internet until it finds an image to attach to the next transaction. Hippow users will be rewarded for labelling the image with a secret word. It will search for images based on the URL of the last image and the hash of the last block.
+            </section>
+            <section>
+                2. A manual image upload. Hippow users will be rewarded for uploading images to the website and submitting the secret word associated with that image. This method will only be used if method #1 is impossible to properly implement.
+            </section>
+            <section>
+                3. AI and nueral network companies. The downside of having companies upload the images is that the blockchain becomes centralized. The upside is that the blockchain becomes more profitable, as these companies will pay more for the specific images that they upload.
+            </section>
+            <section>
+                II. As soon as the network increases in popularity, we will need to transition from using transactions to using blocks. This transition will be simple. Blocks are essentially just a group of transactions. Transitioning to blocks will allow us to process many, many more transactions per second. Though, it should be noted that Hippow can already process a theoretically infinite number of transactions per second because is not limited by computer processing power.
+            </section>
+            <section>
+                III. We will transition to a variable rewards system in order to encourage good behavior and discourage bad behavior. Currently, we have a fixed rewards system. If you guess a secret word, you always earn exactly 1 coin. In the future, we will change this. The rewards rate will be a function that takes into account a multitude of factors in order to determine how many coins you will earn for guessing.
+            </section>
+            <section>
+                <h2 class="header">FAQ</h2>
+            </section>
+            <section>
+                Q: What are the tokenomics of Hippow?
+            </section>
+            <section>
+                A: Currently, the tokenomics are not set in stone. The initial supply will most likely be 1 billion coins. Hippow will either be inflationary or deflationary based on how much we need to incentivise people to spend their time confirming transactions and how big of a transaction fee we can reasonably charge per transaction.
+            </section>
+            <section>
+                Q: Why can't someone write a program that guesses every single word in the English language until they find a match for the image?
+            </section>
+            <section>
+                A: Currently, you can actually do this. Eventually, we will need to increase the number of secret words required from 1 to 8 or even 12. By increasing the number of words, we make it infeasible for a guessing program to succeed. As an alternative solution, we can start requiring users to draw a box around the object in the image. You must draw the box perfectly in order to confirm the transaction, though there will be a slight tolerance on the drawing. These boxes will be useful to AI/nueral network companies and it will also make it infeasible to cheat.
+            </section>
+            <section>
+                Q: If all the blockchain code is publicly available, how are the secret words hidden?
+            </section>
+            <section>
+                A: The secret words are hidden by a hashing function. It is the SHA256 hashing function, which is used by pretty much all blockchains. When the secret word is created, it is never actually released into the public. Instead, it is appended to the URL of the image and then the resulting string is put into the hashing function. Only the hash is made public. To find out if you guessed the secret word correctly, your computer will append your guessed word to the image URL to see if the resulting hash matches the hash that is given with the image. If the two hashes match, you know that you guessed the right word and your computer can easily prove it to everybody else.
+            </section>
+            <section>
+                Q: What stops someone from labelling an image with a secret word and then guessing that secret word themselves?
+            </section>
+            <section>
+                A: Nothing. This behavior actually wouldn't lead to less security in the blockchain, so there's no need to completely prevent it. However, we can still make it unprofitable in order to discourage such actions. Currently, our rewards system has a fixed value. If you confirm a transaction, you always earn excactly 1 coin. In the future, we will transition to the variable rewards system outlined in the roadmap. One way we can prevent guessing your own secret word is to reduce the rewards rate for people who do this. We can tell who's doing this by looking at the public addresses associated with the images and reducing their rewards accordingly.
+            </section>
+            <section>
+                Q: Why are the private keys so long?
+            </section>
+            <section>
+                A: Because, honestly, I have no idea how else to do it. I should still explain the technical reason for why they're so long. Hippow uses asymmetric RSA encryption to keep the blockchain secure and prevent others from sending money on your behalf. The private key you see in your wallet is the RSA private key that is automatically generated. As soon as I figure out how to create simpler private keys without sacrificing security, Hippow will make the transition to that system.
+            </section>
         </div>
 
         <div id="settings-container">
