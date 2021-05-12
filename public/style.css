@@ -91,9 +91,10 @@ nav > ul > li:hover {
 
 /* WALLET DISPLAY */
 #balance-container {
-    position: fixed;
+    /*position: fixed;
     top: 16px;
-    right: 32px;
+    right: 32px;*/
+    float: right;
     padding: 8px 16px;
     text-align: right;
     background-color: #4E4351;
@@ -133,7 +134,7 @@ nav > ul > li:hover {
 
 /* POP UP MENU */
 #menu-container {
-    float: right;
+    float: left;
     font-size: larger;
     text-align: center;
     color: white;
@@ -246,9 +247,9 @@ nav > ul > li:hover {
     #sidebar {
         display: none !important;
     }
-    #balance-container {
+    /*#balance-container {
         display: none;
-    }
+    }*/
     .mobile-text {
         display: block !important;
     }
