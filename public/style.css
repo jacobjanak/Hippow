@@ -302,6 +302,7 @@ img#hippow1 {
     right: 0;
 }
 img#hippow2 {
+    height: auto;
     width: 512px;
     max-width: 100%;
 }
