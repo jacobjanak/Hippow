@@ -330,6 +330,9 @@ img#hippow2 {
     display: flex;
     justify-content: center;
 }
+.justify-center > img {
+    align-self: flex-start;
+}
 #equation-image {
     width: 160px;
     margin-bottom: 8px;
