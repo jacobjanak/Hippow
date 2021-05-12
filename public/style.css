@@ -7,14 +7,15 @@ body {
     background-color: #FBEAFF;
 }
 
+
 #content-container {
     position: absolute;
-    top: 96px;
+    /* top: 96px;
     left: 256px;
-    right: 0;
+    right: 0; */
     max-width: 744px; /* 768px - 24px for margin */
-    margin-right: 24px;
     padding-bottom: 128px;
+    /* margin-right: 24px; */
 }
 
 /* BLOCKCHAIN DISPLAY */
@@ -191,6 +192,7 @@ nav > ul > li:hover {
 /* END POP UP MENU */
 
 /* large monitors+ */
+/*
 @media only screen and (min-width: 1280px) {
     #content-container {
         position: relative;
@@ -206,6 +208,7 @@ nav > ul > li:hover {
         transform: translateX(-50%);
     }
 }
+*/
 
 /* laptops+ */
 @media only screen and (min-width: 1024px) {
@@ -215,14 +218,16 @@ nav > ul > li:hover {
     body {
         width: 100vw; /* prevent scroll bar from moving content */
     }
+    /*
     #menu-container {
         display: none;
     }
+    */
 
 }
 
 /* tablets- */
-@media only screen and (max-width: 1023px) {
+/* @media only screen and (max-width: 1023px) { */
     #content-container {
         position: relative;
         top: 0;
@@ -250,7 +255,7 @@ nav > ul > li:hover {
     .non-mobile-text {
         display: none;
     }
-}
+/* } */
 
 /* landscape phones- */
 @media only screen and (max-width: 900px) {
