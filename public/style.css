@@ -232,7 +232,7 @@ nav > ul > li:hover {
         position: relative;
         top: 0;
         left: 0;
-        margin: 96px auto 0;
+        margin: 72px auto 0;
     }
     nav {
         right: auto;
@@ -260,6 +260,7 @@ nav > ul > li:hover {
 /* landscape phones- */
 @media only screen and (max-width: 900px) {
     #content-container {
+        margin-top: 96px;
         width: 90%;
     }
     nav {
