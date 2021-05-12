@@ -79,20 +79,8 @@ $(document).ready(function() {
         `;
     }
 
-    // retrieve blockchain info
+    // init blockchain
     let blockchain = []; // the longest blockchain
-    for (let i = 0; i < serverList.length; i++) {
-        $.get(serverList[i] + "/blockchain")
-        .done(possibleBlockchain => {
-            // if (validateBlockchain(possibleBlockchain)) {
-                if (possibleBlockchain.length > blockchain.length) {
-                    blockchain = possibleBlockchain;
-                    processBlockchain(blockchain)
-                }
-            // }
-        })
-        .catch(err => console.log(err))
-    }
 
     /*
     function validateBlockchain(blockchain) {
@@ -202,6 +190,22 @@ $(document).ready(function() {
         }
         else if (page === "blockchain") {
             $("#blockchain-container").show()
+            if (blockchain.length === 0) {
+            for (let i = 0; i < serverList.length; i++) {
+                $("#loading-blockchain").show()
+                $.get(serverList[i] + "/blockchain")
+                    .done(possibleBlockchain => {
+                        // if (validateBlockchain(possibleBlockchain)) {
+                            if (possibleBlockchain.length > blockchain.length) {
+                                blockchain = possibleBlockchain;
+                                $("#loading-blockchain").hide()
+                                processBlockchain(blockchain)
+                            }
+                        // }
+                    })
+                    .catch(err => console.log(err))
+                }
+            }
         }
         else if (page === "wallet") {
             $("#wallet-container").show()

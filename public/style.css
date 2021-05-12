@@ -43,6 +43,11 @@ body {
     border-bottom: 1px #B4A7B7 solid;
     text-align: center;
 }
+#loading-blockchain {
+    margin: 24px auto 0;
+    text-align: center;
+    font-size: large;
+}
 .transaction {
     direction: ltr; /* move scrollbar to left side */
     cursor: pointer;
