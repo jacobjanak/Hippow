@@ -58,7 +58,7 @@ $(document).ready(function() {
     // load list of trusted servers from local storage
     let serverList = JSON.parse(localStorage.getItem("serverList"))
     if (!serverList) {
-        serverList = ["https://www.hippow.cc"];
+        serverList = ["https://spots-cc.herokuapp.com"];
     }
     $("#server-list").val(serverList.join("\n"))
 
